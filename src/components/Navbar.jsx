@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-
+import logo from "../assets/nl-nobg.png";
 const SECTIONS = ["home", "about", "projects", "contact"];
 const NAV_HEIGHT = 72;
 
@@ -74,8 +74,12 @@ export default function Navbar() {
               onClick={() => handleNavClick("home")}
               className="flex items-center gap-3 group cursor-pointer"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-cyan-400 transition-transform group-hover:scale-105">
-                <span className="text-lg font-bold text-white">N</span>
+              <div className="flex h-10 w-10 items-center justify-center transition-transform group-hover:scale-105">
+                <img
+                  src={logo}
+                  alt="Nandra Luthfi Logo"
+                  className="h-10 w-10 object-contain drop-shadow-[0_0_8px_rgba(56,189,248,0.35)]"
+                />
               </div>
 
               <div className="hidden sm:flex flex-col leading-tight">
