@@ -64,9 +64,9 @@ export default function About() {
         </h2>
 
         <p className="about-description mx-auto mb-12 max-w-2xl text-lg text-gray-300">
-          Programmer React JS pemula yang sedang terus berkembang. Fokus belajar
-          membangun UI modern, memahami fundamental frontend, dan berkembang
-          melalui proyek nyata.
+          Saya adalah Programmer React JS pemula yang sedang terus berkembang.
+          Fokus belajar membangun UI modern, memahami fundamental frontend, dan
+          berkembang melalui proyek nyata.
         </p>
 
         {/* Cards */}

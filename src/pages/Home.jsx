@@ -5,6 +5,8 @@ import About from "../components/About";
 import Projects from "../components/Projects";
 
 export default function Home() {
+  const judul = document.title;
+  console.log("Anda berada di", judul);
   return (
     <>
       {/* Global Navigation */}

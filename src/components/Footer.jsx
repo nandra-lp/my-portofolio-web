@@ -56,7 +56,7 @@ export default function Footer() {
               <Linkedin className="w-5 h-5" />
             </a>
             <a
-              href="https://instagram.com/"
+              href="https://www.instagram.com/nandraluthfii/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-full bg-white/5 text-gray-400 hover:text-white hover:bg-pink-500/20 transition-all duration-300 hover:scale-105"
