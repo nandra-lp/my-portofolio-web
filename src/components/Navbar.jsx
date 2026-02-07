@@ -18,8 +18,9 @@ export default function Navbar() {
 
       ticking = true;
       requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        setScrolled(scrollY > 16);
+        setScrolled(window.scrollY > 16);
+
+        let current = "home";
 
         for (const id of SECTIONS) {
           const el = document.getElementById(id);
@@ -27,19 +28,31 @@ export default function Navbar() {
 
           const rect = el.getBoundingClientRect();
           if (rect.top <= NAV_HEIGHT + 24 && rect.bottom >= NAV_HEIGHT + 24) {
-            setActiveSection(id);
+            current = id;
             break;
           }
         }
 
+        setActiveSection((prev) => (prev !== current ? current : prev));
         ticking = false;
       });
     };
 
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenuOpen(false);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize);
+
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const handleNavClick = (id) => {
@@ -68,7 +81,7 @@ export default function Navbar() {
           ${
             scrolled
               ? "bg-black/80 backdrop-blur-xl border-b border-white/10"
-              : "bg-gradient-to-b from-zinc-950/60 via-black/30 to-transparent"
+              : "bg-transparent"
           }
         `}
       >
@@ -76,16 +89,15 @@ export default function Navbar() {
           <div className="flex h-[72px] items-center justify-between">
             {/* Logo */}
             <button
+              type="button"
               onClick={() => handleNavClick("home")}
               className="flex items-center gap-3 group"
             >
-              <div className="flex h-10 w-10 items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                <img
-                  src={logo}
-                  alt="Nandra Luthfi Logo"
-                  className="h-10 w-10 object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
-                />
-              </div>
+              <img
+                src={logo}
+                alt="Nandra Luthfi Logo"
+                className="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
+              />
 
               <div className="hidden sm:flex flex-col leading-tight">
                 <span className="text-base font-semibold text-white">
@@ -103,6 +115,7 @@ export default function Navbar() {
                 {navItems.map((item) => (
                   <button
                     key={item.id}
+                    type="button"
                     onClick={() => handleNavClick(item.id)}
                     className={`
                       relative text-sm font-medium transition-colors
@@ -114,9 +127,8 @@ export default function Navbar() {
                     `}
                   >
                     {item.label}
-
                     {activeSection === item.id && (
-                      <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-white/70" />
+                      <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-white/60" />
                     )}
                   </button>
                 ))}
@@ -124,6 +136,7 @@ export default function Navbar() {
 
               {/* CTA */}
               <button
+                type="button"
                 onClick={() => handleNavClick("contact")}
                 className="
                   rounded-lg border border-white/20
@@ -140,9 +153,11 @@ export default function Navbar() {
 
             {/* Mobile Toggle */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen((v) => !v)}
-              className="lg:hidden p-2 text-zinc-300 hover:text-white"
+              aria-expanded={mobileMenuOpen}
               aria-label="Toggle menu"
+              className="lg:hidden p-2 text-zinc-300 hover:text-white"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -161,6 +176,7 @@ export default function Navbar() {
                 (item) => (
                   <button
                     key={item.id}
+                    type="button"
                     onClick={() => handleNavClick(item.id)}
                     className={`
                       rounded-lg px-4 py-3 text-left text-sm
