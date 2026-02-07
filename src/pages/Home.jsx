@@ -1,12 +1,17 @@
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Intro from "../components/Intro";
 import About from "../components/About";
 import Projects from "../components/Projects";
+import Contact from "../components/Contact";
 
 export default function Home() {
-  const judul = document.title;
-  console.log("Anda berada di", judul);
+  useEffect(() => {
+    document.title = "Nandra - Portofolio";
+    console.log("Anda berada di Nandra - Portofolio");
+  }, []);
+
   return (
     <>
       {/* Global Navigation */}
@@ -28,9 +33,9 @@ export default function Home() {
           <Projects />
         </section>
 
-        {/* Contact (anchor target for CTA & nav) */}
-        <section id="contact" className="scroll-mt-28">
-          {/* Bisa berisi ContactForm / CTA */}
+        {/* Contact */}
+        <section id="contact">
+          <Contact />
         </section>
       </main>
 

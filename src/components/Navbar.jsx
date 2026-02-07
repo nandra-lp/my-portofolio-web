@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import logo from "../assets/nl-nobg.png";
+
 const SECTIONS = ["home", "about", "projects", "contact"];
 const NAV_HEIGHT = 72;
 
@@ -61,24 +62,28 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 z-50 w-full transition-all duration-300 cursor-pointer ${
-          scrolled
-            ? "bg-black/90 backdrop-blur-xl border-b border-white/10"
-            : "bg-transparent"
-        }`}
+        className={`
+          fixed top-0 z-50 w-full
+          transition-all duration-300
+          ${
+            scrolled
+              ? "bg-black/80 backdrop-blur-xl border-b border-white/10"
+              : "bg-gradient-to-b from-zinc-950/60 via-black/30 to-transparent"
+          }
+        `}
       >
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex h-[72px] items-center justify-between">
             {/* Logo */}
             <button
               onClick={() => handleNavClick("home")}
-              className="flex items-center gap-3 group cursor-pointer"
+              className="flex items-center gap-3 group"
             >
-              <div className="flex h-10 w-10 items-center justify-center transition-transform group-hover:scale-105">
+              <div className="flex h-10 w-10 items-center justify-center transition-transform duration-300 group-hover:scale-105">
                 <img
                   src={logo}
                   alt="Nandra Luthfi Logo"
-                  className="h-10 w-10 object-contain drop-shadow-[0_0_8px_rgba(56,189,248,0.35)]"
+                  className="h-10 w-10 object-contain drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
                 />
               </div>
 
@@ -86,7 +91,7 @@ export default function Navbar() {
                 <span className="text-base font-semibold text-white">
                   Nandra
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-zinc-400">
                   Frontend Developer
                 </span>
               </div>
@@ -99,15 +104,19 @@ export default function Navbar() {
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    className={`relative text-sm font-medium transition-colors ${
-                      activeSection === item.id
-                        ? "text-sky-400"
-                        : "text-gray-300 hover:text-white"
-                    }`}
+                    className={`
+                      relative text-sm font-medium transition-colors
+                      ${
+                        activeSection === item.id
+                          ? "text-white"
+                          : "text-zinc-400 hover:text-white"
+                      }
+                    `}
                   >
                     {item.label}
+
                     {activeSection === item.id && (
-                      <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-400" />
+                      <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-white/70" />
                     )}
                   </button>
                 ))}
@@ -116,7 +125,14 @@ export default function Navbar() {
               {/* CTA */}
               <button
                 onClick={() => handleNavClick("contact")}
-                className="rounded-lg bg-gradient-to-r from-sky-500 to-cyan-400 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-sky-500/20"
+                className="
+                  rounded-lg border border-white/20
+                  bg-white/5 px-6 py-2.5
+                  text-sm font-semibold text-white
+                  backdrop-blur-sm
+                  transition-all
+                  hover:bg-white/10 hover:border-white/30
+                "
               >
                 Contact
               </button>
@@ -125,7 +141,7 @@ export default function Navbar() {
             {/* Mobile Toggle */}
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
-              className="lg:hidden p-2 text-gray-300 hover:text-white cursor-pointer"
+              className="lg:hidden p-2 text-zinc-300 hover:text-white"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -134,9 +150,11 @@ export default function Navbar() {
 
           {/* Mobile Menu */}
           <div
-            className={`lg:hidden overflow-hidden transition-all duration-300 ${
-              mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            className={`
+              lg:hidden overflow-hidden
+              transition-all duration-300
+              ${mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}
+            `}
           >
             <div className="flex flex-col gap-1 pb-4">
               {[...navItems, { id: "contact", label: "Contact" }].map(
@@ -144,11 +162,15 @@ export default function Navbar() {
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    className={`rounded-lg px-4 py-3 text-left text-sm transition-colors ${
-                      activeSection === item.id
-                        ? "bg-sky-500/10 text-sky-400"
-                        : "text-gray-300 hover:bg-white/5 hover:text-white"
-                    }`}
+                    className={`
+                      rounded-lg px-4 py-3 text-left text-sm
+                      transition-colors
+                      ${
+                        activeSection === item.id
+                          ? "bg-white/10 text-white"
+                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                      }
+                    `}
                   >
                     {item.label}
                   </button>
