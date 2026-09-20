@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 import DetailAbout from "./DetailAbout";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import gsap from "gsap";
 
 export default function About() {
-  const sectionRef = useRef(null);
+  const [sectionRef, isVisible] = useScrollReveal({ threshold: 0.35 });
   const titleRef = useRef(null);
   const descRef = useRef(null);
   const cardsRef = useRef([]);
   const progressBarRef = useRef(null);
-
-  const [isVisible, setIsVisible] = useState(false);
 
   /* ===============================
      GSAP Entrance Animation (Optimized)
@@ -52,37 +53,14 @@ export default function About() {
     return () => ctx.revert();
   }, [isVisible]);
 
-  /* ===============================
-     Intersection Observer (Once)
-  =============================== */
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(el); // 🔥 stop observing after trigger
-        }
-      },
-      { threshold: 0.35 },
-    );
-
-    observer.observe(el);
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="relative overflow-hidden py-24"
+      className="relative overflow-hidden py-32"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-black to-zinc-950" />
-
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.03),_transparent_60%)] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 text-center">
         {/* Header */}
@@ -106,7 +84,12 @@ export default function About() {
         <div className="grid gap-6 md:grid-cols-2">
           <div ref={(el) => (cardsRef.current[0] = el)}>
             <DetailAbout
-              title="Yang Sedang Dipelajari"
+              title={
+                <span className="flex items-center gap-2">
+                  <MenuBookIcon className="text-amber-400" fontSize="small" />
+                  Yang Sedang Dipelajari
+                </span>
+              }
               items={[
                 "React (Fundamental)",
                 "JavaScript ES6+",
@@ -114,15 +97,16 @@ export default function About() {
                 "REST API (Basic)",
                 "Git & Workflow Dasar",
               ]}
-              className="rounded-xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm"
+              className="rounded-xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300 hover:border-amber-500/30 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(245,158,11,0.1)]"
             />
           </div>
 
           <div
             ref={(el) => (cardsRef.current[1] = el)}
-            className="rounded-xl border border-white/10 bg-white/[0.04] p-6 text-left backdrop-blur-sm"
+            className="rounded-xl border border-white/10 bg-white/[0.04] p-6 text-left backdrop-blur-sm transition-all duration-300 hover:border-amber-500/30 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(245,158,11,0.1)]"
           >
-            <h4 className="mb-4 text-lg font-semibold text-white">
+            <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+              <TrendingUpIcon className="text-amber-400" fontSize="small" />
               Progress Belajar
             </h4>
 
@@ -131,10 +115,10 @@ export default function About() {
               <span>Advanced</span>
             </div>
 
-            <div className="h-2 w-full rounded-full bg-white/10">
+            <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
               <div
                 ref={progressBarRef}
-                className="h-2 rounded-full bg-white"
+                className="h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]"
                 style={{ width: "0%" }}
               />
             </div>

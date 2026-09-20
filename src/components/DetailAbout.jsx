@@ -1,3 +1,5 @@
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+
 export default function DetailAbout({ title, items }) {
   return (
     <div className="p-6 bg-white/[0.03] rounded-xl border border-white/10 backdrop-blur-sm hover:border-sky-500/20 transition-colors duration-300">
@@ -8,7 +10,10 @@ export default function DetailAbout({ title, items }) {
             key={i}
             className="flex items-center text-gray-300 group/item transition-all duration-200 hover:translate-x-1"
           >
-            <span className="w-2 h-2 bg-gradient-to-r from-sky-400 to-cyan-400 rounded-full mr-3 group-hover/item:scale-125 transition-transform duration-300" />
+            <KeyboardDoubleArrowRightIcon 
+              className="text-sky-400 mr-2 group-hover/item:scale-125 transition-transform duration-300" 
+              fontSize="small" 
+            />
             <span className="text-base leading-relaxed group-hover/item:text-sky-100 transition-colors duration-300">
               {item}
             </span>

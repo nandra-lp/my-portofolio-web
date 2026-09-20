@@ -1,11 +1,12 @@
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ChevronUp,
-  Instagram,
-  Music,
-} from 'lucide-react'
+import GitHub from '@mui/icons-material/GitHub';
+import LinkedIn from '@mui/icons-material/LinkedIn';
+import Email from '@mui/icons-material/Email';
+import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
+import Instagram from '@mui/icons-material/Instagram';
+import MusicNote from '@mui/icons-material/MusicNote';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import logo from '../assets/nl-nobg.png'
 
 export default function Footer() {
@@ -57,11 +58,11 @@ export default function Footer() {
             {/* Middle - Social */}
             <div className="flex flex-wrap justify-center gap-3">
               <Social href="https://github.com/nandra-lp" label="GitHub">
-                <Github className="w-5 h-5" />
+                <GitHub className="w-5 h-5" />
               </Social>
 
               <Social href="https://linkedin.com/in/USERNAME" label="LinkedIn">
-                <Linkedin className="w-5 h-5" />
+                <LinkedIn className="w-5 h-5" />
               </Social>
 
               <Social
@@ -72,26 +73,38 @@ export default function Footer() {
               </Social>
 
               <Social href="https://tiktok.com/" label="TikTok">
-                <Music className="w-5 h-5" />
+                <MusicNote className="w-5 h-5" />
               </Social>
 
               <Social href="mailto:hello@nandra.com" label="Email">
-                <Mail className="w-5 h-5" />
+                <Email className="w-5 h-5" />
               </Social>
             </div>
 
             {/* Right - Back to Top */}
-            <button
+            <Button
               onClick={scrollToTop}
-              className="group flex items-center gap-3 text-zinc-400 hover:text-white transition-colors"
+              className="group"
+              disableRipple
+              endIcon={
+                <div className="p-2 rounded-full border border-white/5 bg-white/5 group-hover:bg-amber-500/10 group-hover:border-amber-500/30 group-hover:text-amber-400 transition-all duration-300">
+                  <KeyboardArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+                </div>
+              }
+              sx={{
+                color: '#a1a1aa', // zinc-400
+                textTransform: 'none',
+                letterSpacing: '0.025em',
+                fontWeight: 500,
+                '&:hover': {
+                  color: 'white',
+                  backgroundColor: 'transparent'
+                },
+                padding: '8px 12px'
+              }}
             >
-              <span className="text-sm tracking-wide font-medium">
-                Kembali ke atas
-              </span>
-              <div className="p-2.5 rounded-full border border-white/5 bg-white/5 group-hover:bg-white/10 group-hover:border-white/10 transition-all duration-300">
-                <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
-              </div>
-            </button>
+              Kembali ke atas
+            </Button>
           </div>
 
           {/* Divider */}
@@ -125,17 +138,24 @@ export default function Footer() {
 /* Reusable Social Button */
 function Social({ href, label, children }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="group relative p-3 rounded-full border border-white/5 bg-white/5 text-zinc-400 
-                 hover:text-white hover:bg-white/10 hover:border-white/10 
-                 transition-all duration-300 hover:scale-110"
-    >
-      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md rounded-full" />
-      <span className="relative z-10">{children}</span>
-    </a>
+    <Tooltip title={label} placement="top" arrow>
+      <IconButton
+        component="a"
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        className="group relative border border-white/5 bg-white/5 text-zinc-400 
+                   hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/30 
+                   transition-all duration-300 hover:scale-110"
+        sx={{
+          padding: '12px',
+          color: 'inherit', // Let tailwind text-zinc-400 / hover handle color
+        }}
+      >
+        <div className="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md rounded-full" />
+        <span className="relative z-10 flex">{children}</span>
+      </IconButton>
+    </Tooltip>
   )
 }

@@ -1,69 +1,164 @@
-import { ArrowRight, Mail } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import Email from '@mui/icons-material/Email';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import Button from "@mui/material/Button";
+import gsap from "gsap";
 import wm from "../assets/nl-wm.png";
 
 export default function Intro() {
+  const sectionRef = useRef(null);
+  const nameRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const dividerRef = useRef(null);
+  const paraRef = useRef(null);
+  const tagsRef = useRef([]);
+  const ctaRef = useRef(null);
+  const wmRef = useRef(null);
+  const scrollIndicatorRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      /* ── Entrance timeline (staggered, sama pola About & Projects) ── */
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        delay: 0.15,
+      });
+
+      tl.fromTo(
+        nameRef.current,
+        { opacity: 0, y: 36 },
+        { opacity: 1, y: 0, duration: 0.9 },
+      )
+        .fromTo(
+          subtitleRef.current,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.65 },
+          "-=0.55",
+        )
+        /* divider: expand dari tengah → kiri-kanan */
+        .fromTo(
+          dividerRef.current,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.75, ease: "power2.inOut" },
+          "-=0.35",
+        )
+        .fromTo(
+          paraRef.current,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.65 },
+          "-=0.5",
+        )
+        /* tech chips — stagger per item */
+        .fromTo(
+          tagsRef.current,
+          { opacity: 0, y: 12, scale: 0.94 },
+          { opacity: 1, y: 0, scale: 1, stagger: 0.09, duration: 0.5 },
+          "-=0.35",
+        )
+        /* CTA buttons */
+        .fromTo(
+          ctaRef.current,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          "-=0.25",
+        )
+        /* scroll indicator fade in */
+        .fromTo(
+          scrollIndicatorRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5 },
+          "-=0.15",
+        );
+
+      /* ── Watermark — smooth float (lebih halus dari CSS keyframe) ── */
+      gsap.to(wmRef.current, {
+        y: -22,
+        duration: 9,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      /* ── Scroll indicator — subtle bounce ── */
+      gsap.to(scrollIndicatorRef.current, {
+        y: 7,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 1.2,
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Base Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-black to-zinc-950" />
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+    >
 
-      {/* Watermark Image Background */}
+      {/* ── Watermark ── */}
       <div
-        className="
-          absolute inset-0
-          bg-no-repeat bg-center bg-contain
-          opacity-[0.14]
-          animate-[float_12s_ease-in-out_infinite]
-        "
-        style={{
-          backgroundImage: `url(${wm})`,
-        }}
+        ref={wmRef}
+        className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-10 pointer-events-none"
+        style={{ backgroundImage: `url(${wm})` }}
       />
 
-      {/* Subtle Highlight */}
-      <div
-        className="
-          absolute inset-0
-          bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.04),_transparent_60%)]
-          pointer-events-none
-        "
-      />
-
-      {/* Content */}
-      <div
-        className="
-          relative z-10 text-center max-w-4xl px-6
-          animate-[fadeUp_0.8s_ease-out_both]
-        "
-      >
-        <h1 className="text-5xl font-bold text-white tracking-tight">
+      {/* ── Main content ── */}
+      <div className="relative z-10 text-center max-w-4xl px-6">
+        {/* Name */}
+        <h1
+          ref={nameRef}
+          className="text-5xl md:text-6xl font-bold text-white tracking-tight opacity-0"
+        >
           Nandra Luthfi
-          <span className="block text-zinc-300 text-xl mt-3 font-medium">
-            Frontend Developer
-          </span>
         </h1>
 
-        <div className="mx-auto mt-6 h-1 w-24 bg-zinc-700 rounded-full" />
+        {/* Role subtitle */}
+        <span
+          ref={subtitleRef}
+          className="block text-zinc-400 text-lg md:text-xl mt-3 font-medium tracking-wide opacity-0"
+        >
+          Frontend Developer
+        </span>
 
-        <p className="mt-8 text-zinc-400 text-lg leading-relaxed">
+        {/* Animated divider — scaleX dari origin-center */}
+        <div className="flex justify-center mt-6">
+          <div
+            ref={dividerRef}
+            className="h-px w-28 bg-linear-to-r from-transparent via-zinc-500 to-transparent origin-center scale-x-0"
+          />
+        </div>
+
+        {/* Tagline */}
+        <p
+          ref={paraRef}
+          className="mt-8 text-zinc-400 text-lg leading-relaxed opacity-0"
+        >
           Membangun website yang{" "}
           <span className="text-white font-medium">cepat</span>,{" "}
           <span className="text-zinc-200 font-medium">responsif</span>, dan{" "}
           <span className="text-zinc-300 font-medium">modern</span>.
         </p>
 
-        {/* Tech Stack */}
+        {/* Tech Stack chips */}
         <div className="mt-10 flex flex-wrap justify-center gap-2">
-          {["React", "Next.js", "Flutter", "Vue.js"].map((t) => (
+          {["React", "Next.js", "Flutter", "Golang"].map((t, i) => (
             <span
               key={t}
+              ref={(el) => (tagsRef.current[i] = el)}
               className="
                 px-4 py-2
                 bg-white/5 border border-white/10
-                rounded-lg text-sm text-zinc-200
+                rounded-lg text-sm text-zinc-300
                 backdrop-blur-sm
                 transition-all duration-300
-                hover:-translate-y-1 hover:bg-white/10
+                hover:-translate-y-1 hover:bg-white/10 hover:text-white
+                opacity-0 cursor-default select-none
               "
             >
               {t}
@@ -71,62 +166,70 @@ export default function Intro() {
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="mt-12 flex justify-center gap-4 flex-wrap">
-          <a
-            href="#projects"
-            className="
-              group flex items-center gap-2 px-6 py-3
-              bg-zinc-100 text-black rounded-lg font-medium
-              hover:bg-white
-              focus:outline-none focus:ring-2 focus:ring-white/30
-              transition-all
-            "
+        {/* CTA Buttons */}
+        <div
+          ref={ctaRef}
+          className="mt-12 flex justify-center gap-4 flex-wrap opacity-0"
+        >
+          <Button
+            component={Link}
+            to="/project"
+            variant="contained"
+            color="primary"
+            endIcon={<ArrowForward style={{ fontSize: 16 }} />}
+            sx={{ 
+              borderRadius: '8px', 
+              textTransform: 'none', 
+              fontWeight: 500,
+              padding: '10px 24px',
+              backgroundColor: '#f59e0b', // amber-500
+              color: 'black',
+              boxShadow: '0 0 15px rgba(245,158,11,0.4)',
+              '&:hover': {
+                backgroundColor: '#fbbf24', // amber-400
+                boxShadow: '0 0 25px rgba(245,158,11,0.6)',
+                transform: 'scale(1.05)'
+              },
+              transition: 'all 0.3s'
+            }}
           >
             Lihat Proyek
-            <ArrowRight
-              size={16}
-              className="transition-transform group-hover:translate-x-1"
-            />
-          </a>
+          </Button>
 
-          <a
+          <Button
             href="#contact"
-            className="
-              flex items-center gap-2 px-6 py-3
-              border border-white/15 text-white rounded-lg font-medium
-              hover:bg-white/5 hover:border-white/25
-              focus:outline-none focus:ring-2 focus:ring-white/20
-              transition-all
-            "
+            variant="outlined"
+            color="inherit"
+            startIcon={<Email style={{ fontSize: 16 }} />}
+            sx={{
+              borderRadius: '8px',
+              textTransform: 'none',
+              fontWeight: 500,
+              padding: '10px 24px',
+              borderColor: 'rgba(255,255,255,0.15)',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                borderColor: 'rgba(255,255,255,0.25)'
+              },
+              transition: 'all 0.3s'
+            }}
           >
-            <Mail size={16} /> Hubungi Saya
-          </a>
+            Hubungi Saya
+          </Button>
         </div>
       </div>
 
-      {/* Custom keyframes */}
-      <style>{`
-        @keyframes fadeUp {
-          from {
-            opacity: 0;
-            transform: translateY(24px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-16px);
-          }
-        }
-      `}</style>
+      {/* ── Scroll indicator ── */}
+      <div
+        ref={scrollIndicatorRef}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-0"
+      >
+        <span className="text-[11px] text-zinc-600 tracking-[0.2em] uppercase">
+          Scroll
+        </span>
+        <KeyboardArrowDown style={{ fontSize: 14 }} className="text-zinc-600" />
+      </div>
     </section>
   );
 }
