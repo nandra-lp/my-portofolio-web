@@ -8,10 +8,10 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#3b82f6', // Tailwind blue-500
+      main: '#f59e0b', // Tailwind amber-500 (aksen Gold tema)
     },
     secondary: {
-      main: '#ec4899', // Tailwind pink-500
+      main: '#fbbf24', // Tailwind amber-400
     }
   },
   typography: {

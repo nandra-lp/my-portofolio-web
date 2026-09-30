@@ -21,4 +21,24 @@ export default defineConfig({
   server: {
     host: true,
   },
+
+  preview: {
+    port: 4173,
+  },
+
+  build: {
+    sourcemap: false,
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 600,
+    assetsInlineLimit: 4096,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-mui": ["@mui/material", "@mui/icons-material"],
+          "vendor-gsap": ["gsap"],
+        },
+      },
+    },
+  },
 });

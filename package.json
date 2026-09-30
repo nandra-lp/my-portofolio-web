@@ -1,12 +1,19 @@
 {
   "name": "react-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Portfolio Nandra Luthfi - Frontend Developer (React + Vite + Tailwind CSS)",
+  "author": "Nandra Luthfi",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview"
   },
   "dependencies": {

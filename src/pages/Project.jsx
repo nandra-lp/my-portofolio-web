@@ -5,14 +5,14 @@ import Projects from "../components/Projects";
 
 export default function Project() {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Scroll ke atas ditangani terpusat oleh <ScrollToTop /> di App.
     document.title = "Nandra - Projects";
   }, []);
 
   return (
     <>
       <Navbar />
-      <main className="relative pt-10 pb-20">
+      <main className="relative bg-slate-950 pt-10 pb-20">
         <Projects />
       </main>
       <Footer />

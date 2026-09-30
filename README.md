@@ -1,16 +1,49 @@
-# React + Vite
+# React Portfolio — Nandra Luthfi
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio Frontend Developer berbasis **React 19 + Vite + Tailwind CSS v4**,
+dengan animasi GSAP, routing React Router, dan mini-game "Planet Memory".
 
-Currently, two official plugins are available:
+## Cara menjalankan
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install
+npm run dev      # server pengembangan
+npm run build    # build produksi ke dist/
+npm run preview  # pratinjau hasil build
+npm run lint     # cek ESLint
+npm run lint:fix # perbaiki otomatis yang bisa diperbaiki
+```
 
-## React Compiler
+Butuh Node.js >= 18.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Struktur folder
 
-## Expanding the ESLint configuration
+```
+src/
+  assets/        # logo, watermark, gambar planet
+  components/    # Navbar, Intro, About, Projects, ProjectCard,
+                 # Contact, Footer, GameCard, ErrorBoundary, DetailAbout
+  data/          # data proyek terpusat (projects.js)
+  hooks/         # useScrollReveal
+  pages/         # Home, Project, Playground, MemoryGame, NotFound
+  App.jsx        # routing (lazy) + ScrollToTop + ErrorBoundary
+  main.jsx       # ThemeProvider MUI + render root
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Rute
+
+| Path          | Halaman              |
+|---------------|----------------------|
+| `/`           | Home (Intro+About+Contact) |
+| `/project`    | Daftar proyek (lazy chunk) |
+| `/playground` | Planet Memory Game (lazy chunk) |
+| `*`           | 404 NotFound         |
+
+## Catatan optimasi
+
+- Semua route di-code-split via `React.lazy`; vendor dipecah di
+  `vite.config.js` (`vendor-react`, `vendor-mui`, `vendor-gsap`).
+- Gambar planet & watermark terkompresi (lihat `changelog.md`).
+  PR berikutnya: `bumi.png`, `venus.png`, `merkurius.png`, `nl-nobg.png`,
+  dan favicon `public/nl-nobg.svg` masih >300 KB — kandidat WebP/AVIF.
+- Riwayat & rencana perubahan: lihat [`changelog.md`](./changelog.md).

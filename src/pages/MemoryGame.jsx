@@ -2,15 +2,65 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { cardImages } from "../assets/planets/planets";
 import GameCard from "../components/GameCard";
 import ReplayIcon from '@mui/icons-material/Replay';
+import EmojiEvents from '@mui/icons-material/EmojiEvents';
+
+const BEST_SCORE_KEY = "planet-memory-best";
+const TOTAL_PAIRS = cardImages.length;
+
+/** Fisher-Yates shuffle — uniform, tidak bias seperti sort(() => Math.random() - 0.5). */
+function shuffleArray(array) {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/** crypto.randomUUID tidak tersedia di browser lama / non-secure context. */
+function generateId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `card-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 function createShuffledCards() {
-  return [...cardImages, ...cardImages]
-    .sort(() => Math.random() - 0.5)
-    .map((card) => ({
-      ...card,
-      id: crypto.randomUUID(),
-      matched: false,
-    }));
+  return shuffleArray([...cardImages, ...cardImages]).map((card) => ({
+    ...card,
+    id: generateId(),
+    matched: false,
+  }));
+}
+
+function readBestScore() {
+  try {
+    const raw = localStorage.getItem(BEST_SCORE_KEY);
+    const value = Number.parseInt(raw ?? "", 10);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+/* -------------------------------------------------- */
+/* HUD pill — satu bahasa visual untuk semua statistik */
+const PILL_CLASS =
+  "px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-white/10 bg-slate-900/50 backdrop-blur-md";
+
+function StatPill({ label, value, accent = false, live = false, children, ...rest }) {
+  return (
+    <div className={PILL_CLASS} {...rest}>
+      <span className="text-slate-400 text-sm mr-2">{label}:</span>
+      <span
+        className={`font-medium text-lg ${accent ? "text-amber-400" : "text-white"}`}
+        {...(live ? { "aria-live": "polite" } : {})}
+      >
+        {value}
+      </span>
+      {children}
+    </div>
+  );
 }
 
 export default function MemoryGame() {
@@ -20,8 +70,14 @@ export default function MemoryGame() {
   const [turns, setTurns] = useState(0);
   const [disabled, setDisabled] = useState(false);
   const [isWon, setIsWon] = useState(false);
+  const [best, setBest] = useState(readBestScore);
 
   const timersRef = useRef([]);
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach((timer) => clearTimeout(timer));
+    timersRef.current = [];
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -30,16 +86,14 @@ export default function MemoryGame() {
   }, []);
 
   const shuffleCards = useCallback(() => {
-    timersRef.current.forEach((timer) => clearTimeout(timer));
-    timersRef.current = [];
-
+    clearTimers();
     setCards(createShuffledCards());
     setChoiceOne(null);
     setChoiceTwo(null);
     setTurns(0);
     setIsWon(false);
     setDisabled(false);
-  }, []);
+  }, [clearTimers]);
 
   const handleChoice = useCallback(
     (card) => {
@@ -83,43 +137,75 @@ export default function MemoryGame() {
     [choiceOne, disabled],
   );
 
-  // Effect hanya untuk cek win condition
+  // Effect hanya untuk cek win condition — overlay menang menetap
+  // sampai pemain menekan "Main Lagi" (tidak auto-reshuffle).
   useEffect(() => {
-    if (cards.length > 0 && cards.every((card) => card.matched)) {
-      const timer = setTimeout(() => {
-        setIsWon(true);
+    if (cards.length === 0 || !cards.every((card) => card.matched)) return;
 
-        const shuffleTimer = setTimeout(() => {
-          shuffleCards();
-        }, 2000);
+    const timer = setTimeout(() => {
+      setIsWon(true);
+      setBest((prevBest) => {
+        if (prevBest !== null && turns >= prevBest) return prevBest;
+        try {
+          localStorage.setItem(BEST_SCORE_KEY, String(turns));
+        } catch {
+          // abaikan: storage tidak tersedia (mode privat, dsb.)
+        }
+        return turns;
+      });
+    }, 600);
 
-        timersRef.current.push(shuffleTimer);
-      }, 600);
+    timersRef.current.push(timer);
+    return () => clearTimeout(timer);
+  }, [cards, turns]);
 
-      timersRef.current.push(timer);
-      return () => clearTimeout(timer);
-    }
-  }, [cards, shuffleCards]);
+  const matchedPairs = cards.filter((c) => c.matched).length / 2;
+  const progress = Math.round((matchedPairs / TOTAL_PAIRS) * 100);
+  const isRecord = isWon && best !== null && turns <= best;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 via-black to-zinc-950 relative overflow-hidden flex flex-col items-center py-20 px-4 pt-32">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/20 via-transparent to-transparent pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-black to-slate-950 relative overflow-hidden flex flex-col items-center px-4 pt-28 pb-20">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/20 via-transparent to-transparent pointer-events-none" />
 
       {/* Header */}
-      <div className="w-full max-w-3xl lg:max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between mb-8 relative z-10 gap-6">
-        <div className="text-center md:text-left">
-          <h1 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">
+      <div className="w-full max-w-3xl lg:max-w-4xl mx-auto flex flex-col items-center text-center mb-8 relative z-10 gap-5">
+        <span className="inline-flex items-center gap-3">
+          <span className="h-px w-10 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+          <span className="text-sm font-medium text-amber-400/80 tracking-wider uppercase">
+            Playground
+          </span>
+          <span className="h-px w-10 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+        </span>
+
+        <div>
+          <h1 className="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">
             Planet Memory
           </h1>
 
-          <p className="text-zinc-400 text-sm">Temukan semua pasangan planet</p>
+          <p className="text-slate-400 text-sm mt-2">Temukan semua {TOTAL_PAIRS} pasangan planet</p>
         </div>
 
+        {/* HUD — selaras: semua pil memakai StatPill yang sama */}
         <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
-          <div className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-white/5 bg-white/5 backdrop-blur-md">
-            <span className="text-zinc-400 text-sm mr-2">Langkah:</span>
-            <span className="text-white font-medium text-lg">{turns}</span>
-          </div>
+          <StatPill label="Langkah" value={turns} live />
+
+          <StatPill label="Pasangan" value={`${matchedPairs}/${TOTAL_PAIRS}`}>
+            <span className="ml-3 inline-block h-1.5 w-16 sm:w-20 overflow-hidden rounded-full bg-white/10 align-middle">
+              <span
+                className="block h-full rounded-full bg-gradient-to-r from-amber-200 to-amber-500 transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </span>
+            <span className="sr-only">{`Progres ${progress} persen`}</span>
+          </StatPill>
+
+          {/* Selalu dirender (tampil "–" bila belum ada) agar HUD tidak bergeser */}
+          <StatPill
+            label="Terbaik"
+            value={best ?? "–"}
+            accent
+            aria-label={best !== null ? `Skor terbaik ${best} langkah` : "Belum ada skor terbaik"}
+          />
 
           <button
             onClick={shuffleCards}
@@ -132,7 +218,7 @@ export default function MemoryGame() {
       </div>
 
       {/* Game Grid */}
-      <div className="w-full max-w-3xl lg:max-w-4xl mx-auto relative z-10 pb-20">
+      <div className="w-full max-w-3xl lg:max-w-4xl mx-auto relative z-10">
         <div className="grid grid-cols-4 gap-2 min-[375px]:gap-3 md:gap-4 lg:gap-6">
           {cards.map((card) => (
             <GameCard
@@ -150,17 +236,36 @@ export default function MemoryGame() {
         </div>
 
         {isWon && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-3xl" />
 
-            <div className="relative w-[90%] max-w-md mx-auto bg-zinc-900 border border-white/20 p-6 sm:p-8 rounded-2xl text-center shadow-2xl">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Permainan selesai dalam ${turns} langkah`}
+              className="relative w-full max-w-md mx-auto bg-slate-900 border border-amber-400/30 p-6 sm:p-8 rounded-3xl text-center shadow-[0_0_60px_rgba(245,158,11,0.15)]"
+            >
+              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-amber-400/40 bg-amber-500/10">
+                <EmojiEvents className="text-amber-400" />
+              </span>
+
               <h2 className="text-3xl font-bold text-white mb-2">
-                Luar Biasa 🎉
+                Luar Biasa!
               </h2>
 
-              <p className="text-zinc-300 mb-6">
-                Kamu menyelesaikannya dalam {turns} langkah
+              <p className="text-slate-300 mb-1">
+                {TOTAL_PAIRS} pasangan dalam {turns} langkah
               </p>
+              {isRecord ? (
+                <p className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-500/10 px-4 py-1 text-sm font-medium text-amber-300">
+                  <EmojiEvents style={{ fontSize: 14 }} aria-hidden="true" />
+                  Rekor terbaik baru!
+                </p>
+              ) : (
+                <p className="text-slate-500 text-sm mb-6">
+                  Terbaik: {best ?? turns} langkah
+                </p>
+              )}
 
               <button
                 onClick={shuffleCards}

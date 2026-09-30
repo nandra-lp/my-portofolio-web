@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Intro from "../components/Intro";
 import About from "../components/About";
 import Contact from "../components/Contact";
 
-// Generate particles di luar komponen agar tidak terpengaruh render cycle
+// Generate particles — murni & deterministik per-mount via useMemo.
 function generateParticles() {
   return [...Array(25)].map((_, i) => ({
     id: i,
@@ -19,20 +19,18 @@ function generateParticles() {
 export default function Home() {
   useEffect(() => {
     document.title = "Nandra - Portofolio";
-    console.log("Anda berada di Nandra - Portofolio");
   }, []);
 
-  // useState dengan lazy initializer - hanya dipanggil sekali saat mount
-  const [particles] = useState(generateParticles);
+  const particles = useMemo(() => generateParticles(), []);
 
   return (
     <>
       {/* Global Navigation */}
       <Navbar />
 
-      <main className="relative bg-gradient-to-b from-zinc-950 via-black to-zinc-950 overflow-hidden">
+      <main className="relative bg-gradient-to-b from-slate-950 via-black to-slate-950 overflow-hidden">
         {/* Global Space Particles Background */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 inset-x-0 h-[1000px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.05),transparent_60%)]" />
           <div className="absolute bottom-0 inset-x-0 h-[800px] bg-[radial-gradient(ellipse_at_bottom,rgba(245,158,11,0.03),transparent_50%)]" />
 

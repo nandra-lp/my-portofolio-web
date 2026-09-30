@@ -5,14 +5,14 @@ import MemoryGame from "./MemoryGame";
 
 export default function Playground() {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Scroll ke atas ditangani terpusat oleh <ScrollToTop /> di App.
     document.title = "Nandra - Playground";
   }, []);
 
   return (
     <>
       <Navbar />
-      <main className="relative">
+      <main className="relative bg-slate-950">
         <MemoryGame />
       </main>
       <Footer />
