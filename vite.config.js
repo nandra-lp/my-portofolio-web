@@ -35,8 +35,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-mui": ["@mui/material", "@mui/icons-material"],
-          "vendor-gsap": ["gsap"],
         },
       },
     },

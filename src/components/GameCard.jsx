@@ -1,35 +1,47 @@
-import Psychology from '@mui/icons-material/Psychology';
+import { Icon } from "./ui/Icon";
 
 export default function GameCard({ card, handleChoice, flipped, disabled }) {
   const isDisabled = disabled || card.matched;
+
+  const handleKeyDown = (e) => {
+    if (isDisabled) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleChoice(card);
+    }
+  };
 
   return (
     <button
       type="button"
       onClick={() => handleChoice(card)}
+      onKeyDown={handleKeyDown}
       disabled={isDisabled}
+      tabIndex={isDisabled ? -1 : 0}
       aria-label={
         card.matched
           ? `Kartu ${card.name} (pasangan cocok)`
           : flipped
             ? `Kartu ${card.name}`
-            : 'Kartu tertutup, tekan untuk membuka'
+            : "Kartu tertutup, tekan untuk membuka"
       }
       aria-pressed={flipped}
-      className={`relative h-24 min-[375px]:h-28 sm:h-36 md:h-40 lg:h-44 w-full group rounded-2xl text-left disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400 transition-shadow duration-500 ${card.matched ? "ring-1 ring-amber-400/50 shadow-[0_0_24px_rgba(245,158,11,0.25)]" : ""}`}
-      style={{ perspective: '1000px' }}
+      className={`group relative w-full aspect-square rounded-2xl text-left transition-shadow duration-300 disabled:cursor-default ${
+        card.matched ? "ring-2 ring-primary" : ""
+      } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2`}
+      style={{ perspective: "1000px" }}
     >
       <div
-        className="w-full h-full transition-transform duration-500 relative"
+        className="relative h-full w-full transition-transform duration-500 motion-reduce:transition-none"
         style={{
-          transformStyle: 'preserve-3d',
-          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+          transformStyle: "preserve-3d",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
         {/* Front of card (Planet showing) - Note that it's rotated 180deg by default so when the container flips 180deg this becomes 360/0deg */}
         <div
-          className="absolute inset-0 w-full h-full bg-white/10 rounded-2xl border border-white/20 flex flex-col items-center justify-center p-2 backdrop-blur-md shadow-xl shadow-white/5"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+          className="absolute inset-0 flex h-full w-full flex-col items-center justify-center rounded-2xl border border-border bg-surface p-2 shadow-md"
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
           <img
             src={card.src}
@@ -38,19 +50,21 @@ export default function GameCard({ card, handleChoice, flipped, disabled }) {
             decoding="async"
             width="80"
             height="80"
-            className="w-10 h-10 min-[375px]:w-12 min-[375px]:h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+            className="h-12 w-12 object-contain sm:h-16 sm:w-16 md:h-20 md:w-20"
           />
-          <p className="text-white text-[10px] sm:text-xs md:text-sm mt-1 sm:mt-2 font-medium tracking-wide">{card.name}</p>
+          <p className="mt-1 text-[10px] font-medium tracking-wide text-heading sm:mt-2 sm:text-xs md:text-sm">
+            {card.name}
+          </p>
         </div>
 
         {/* Back of Card (Cover) */}
         <div
-          className="absolute inset-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent rounded-2xl border border-white/10 flex items-center justify-center group-hover:border-amber-500/30 group-hover:bg-amber-500/10 transition-all shadow-lg text-slate-500 group-hover:text-amber-400"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(0deg)' }}
+          className="absolute inset-0 flex h-full w-full items-center justify-center rounded-2xl border border-border bg-surface-hover text-muted shadow-xs transition-colors group-hover:border-primary/40 group-hover:text-primary"
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(0deg)" }}
         >
-          <Psychology className="w-8 h-8 sm:w-10 sm:h-10 opacity-70 group-hover:scale-110 transition-transform duration-300" />
+          <Icon name="globe" className="h-8 w-8 opacity-70 sm:h-10 sm:w-10" />
         </div>
       </div>
     </button>
-  )
+  );
 }

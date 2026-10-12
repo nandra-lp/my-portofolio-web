@@ -2,13 +2,31 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      /* Inisialisasi tema sebelum render — cegah flash of incorrect theme. */
+      (function () {
+        try {
+          var stored = localStorage.getItem("portfolio-theme");
+          var theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/nl-nobg.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#09090b" />
+    <meta name="theme-color" content="#F8FAFC" />
     <meta name="description" content="Portfolio Nandra Luthfi - Frontend Developer dengan fokus pada React JS dan UI modern." />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Nandra - Portofolio" />

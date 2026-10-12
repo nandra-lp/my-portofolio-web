@@ -2,6 +2,68 @@
 
 > Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/).
 
+## [Unreleased] — Sentuhan Neumorphism Bagian Proyek
+
+### Added (`src/index.css`, `ProjectCard.jsx`, `Projects.jsx`)
+
+- Token `--shadow-neu` / `--shadow-neu-lg` / `--shadow-neu-inset`
+  (dua arah, lembut) + class `.card-neu` — hanya dipakai di kartu
+  Proyek: tanpa border keras, hover terangkat halus.
+- Tombol "Kunjungi GitHub Saya" memakai `shadow-neu` dengan efek
+  tekan `active:shadow-neu-inset`. Bagian lain tak tersentuh.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses; rule `.card-neu`
+  dan `.shadow-neu` terkonfirmasi di CSS produksi.
+
+## [Unreleased] — Kompresi Gambar + Bersih Dependensi
+
+### Added (`public/`, `package.json`)
+
+- `public/apple-touch-icon.png` (180px, 7,4 KB, flatten di atas navy
+  `#10233F`) + `<link rel="apple-touch-icon">` di `index.html`.
+- `sharp` sebagai devDependency untuk pipeline kompresi gambar.
+
+### Changed (`src/assets/`, `public/nl-nobg.svg`)
+
+- 8 gambar planet PNG (±3,3 MB, uranus 2500px) → WebP 256px q80
+  (±79 KB total, transparansi terjaga); import di `planets.js`
+  diperbarui.
+- Logo `nl-nobg.png` 310 KB (2048px) → `nl-logo.webp` 128px 3,5 KB;
+  import di `Navbar.jsx`/`Footer.jsx` diperbarui.
+- Favicon `nl-nobg.svg` 961 KB (jejak path 2048px hasil auto-trace)
+  → monogram "N" SVG 350 byte (navy + aksen amber).
+
+### Removed
+
+- Aset mati: `nl-gmi-nbg.png` (3 MB, tak diimpor sejak Intro
+  dirombak), `NL-wm.png`, `react.svg`, PNG planet & logo lama.
+  `src/assets`: 6,5 MB → 112 KB; `public/`: 952 KB → 24 KB.
+- Dependensi tak terpakai (nol import di `src/`):
+  `@mui/material`, `@mui/icons-material`, `@emotion/react`,
+  `@emotion/styled`, `gsap`. `manualChunks` `vendor-mui`/`vendor-gsap`
+  sudah dibuang sebelumnya.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses; total gambar di
+  `dist/`: ±79 KB WebP (sebelumnya ±3,9 MB PNG).
+- Smoke test `vite preview`: `/`, `/project`, `/playground` → 200,
+  sampel WebP tersaji sebagai `image/webp`.
+
+### Sisa pekerjaan (belum dikerjakan)
+
+- Username LinkedIn (`linkedin.com/in/USERNAME` di Contact/Footer) —
+  butuh info asli dari pemilik repo.
+- `sitemap.xml` — menunggu domain produksi (belum ada).
+- Vite sudah 7.3.2 terinstal (memenuhi target "7.3+").
+
+### Fixed
+
+- Nomor WhatsApp placeholder `wa.me/6281234567890` → nomor asli
+  `wa.me/6281318925381` (dari pemilik repo) di `Contact.jsx`.
+
 ## [Unreleased] — Refaktor Clean Navbar
 
 ### Changed (`src/components/Navbar.jsx`, `Footer.jsx`, `utils/scroll.js`)

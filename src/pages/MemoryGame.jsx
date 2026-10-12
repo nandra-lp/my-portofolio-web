@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { cardImages } from "../assets/planets/planets";
 import GameCard from "../components/GameCard";
-import ReplayIcon from '@mui/icons-material/Replay';
-import EmojiEvents from '@mui/icons-material/EmojiEvents';
+import { Icon } from "../components/ui/Icon";
+import { Badge } from "../components/ui/Tag";
+import { Container } from "../components/ui/Container";
+import { Button } from "../components/ui/Button";
+import { StatPill } from "../components/ui/StatPill";
 
 const BEST_SCORE_KEY = "planet-memory-best";
 const TOTAL_PAIRS = cardImages.length;
@@ -41,26 +44,6 @@ function readBestScore() {
   } catch {
     return null;
   }
-}
-
-/* -------------------------------------------------- */
-/* HUD pill — satu bahasa visual untuk semua statistik */
-const PILL_CLASS =
-  "px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-white/10 bg-slate-900/50 backdrop-blur-md";
-
-function StatPill({ label, value, accent = false, live = false, children, ...rest }) {
-  return (
-    <div className={PILL_CLASS} {...rest}>
-      <span className="text-slate-400 text-sm mr-2">{label}:</span>
-      <span
-        className={`font-medium text-lg ${accent ? "text-amber-400" : "text-white"}`}
-        {...(live ? { "aria-live": "polite" } : {})}
-      >
-        {value}
-      </span>
-      {children}
-    </div>
-  );
 }
 
 export default function MemoryGame() {
@@ -111,8 +94,8 @@ export default function MemoryGame() {
           // Match found - update cards langsung
           setCards((prev) =>
             prev.map((c) =>
-              c.src === choiceOne.src ? { ...c, matched: true } : c,
-            ),
+              c.src === choiceOne.src ? { ...c, matched: true } : c
+            )
           );
 
           const timer = setTimeout(() => {
@@ -134,7 +117,7 @@ export default function MemoryGame() {
         }
       }
     },
-    [choiceOne, disabled],
+    [choiceOne, disabled]
   );
 
   // Effect hanya untuk cek win condition — overlay menang menetap
@@ -164,35 +147,30 @@ export default function MemoryGame() {
   const isRecord = isWon && best !== null && turns <= best;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-black to-slate-950 relative overflow-hidden flex flex-col items-center px-4 pt-28 pb-20">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/20 via-transparent to-transparent pointer-events-none" />
-
+    <div className="flex min-h-screen flex-col items-center bg-background px-4 pb-20 pt-16">
       {/* Header */}
-      <div className="w-full max-w-3xl lg:max-w-4xl mx-auto flex flex-col items-center text-center mb-8 relative z-10 gap-5">
+      <Container className="mb-8 flex w-full flex-col items-center gap-5 text-center">
         <span className="inline-flex items-center gap-3">
-          <span className="h-px w-10 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-          <span className="text-sm font-medium text-amber-400/80 tracking-wider uppercase">
-            Playground
-          </span>
-          <span className="h-px w-10 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+          <span className="h-px w-10 bg-border" aria-hidden="true" />
+          <span className="label">Playground</span>
+          <span className="h-px w-10 bg-border" aria-hidden="true" />
         </span>
 
         <div>
-          <h1 className="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">
-            Planet Memory
-          </h1>
-
-          <p className="text-slate-400 text-sm mt-2">Temukan semua {TOTAL_PAIRS} pasangan planet</p>
+          <h1 className="heading-2">Planet Memory</h1>
+          <p className="body-sm mt-2">
+            Temukan semua {TOTAL_PAIRS} pasangan planet
+          </p>
         </div>
 
         {/* HUD — selaras: semua pil memakai StatPill yang sama */}
-        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <StatPill label="Langkah" value={turns} live />
 
           <StatPill label="Pasangan" value={`${matchedPairs}/${TOTAL_PAIRS}`}>
-            <span className="ml-3 inline-block h-1.5 w-16 sm:w-20 overflow-hidden rounded-full bg-white/10 align-middle">
+            <span className="ml-3 inline-block h-1.5 w-16 overflow-hidden rounded-full bg-border align-middle sm:w-20">
               <span
-                className="block h-full rounded-full bg-gradient-to-r from-amber-200 to-amber-500 transition-all duration-500"
+                className="block h-full rounded-full bg-primary transition-all duration-500 motion-reduce:transition-none"
                 style={{ width: `${progress}%` }}
               />
             </span>
@@ -204,22 +182,28 @@ export default function MemoryGame() {
             label="Terbaik"
             value={best ?? "–"}
             accent
-            aria-label={best !== null ? `Skor terbaik ${best} langkah` : "Belum ada skor terbaik"}
+            aria-label={
+              best !== null
+                ? `Skor terbaik ${best} langkah`
+                : "Belum ada skor terbaik"
+            }
           />
 
-          <button
+          <Button
             onClick={shuffleCards}
-            className="group flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-white/10 bg-white/10 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-400 text-white transition-all duration-300 shadow-lg"
+            variant="secondary"
+            size="sm"
+            className="shadow-sm"
           >
-            <ReplayIcon className="w-4 h-4 group-hover:-rotate-90 transition-transform duration-500" />
+            <Icon name="refresh" className="h-4 w-4" />
             <span className="font-medium">Mulai Ulang</span>
-          </button>
+          </Button>
         </div>
-      </div>
+      </Container>
 
       {/* Game Grid */}
-      <div className="w-full max-w-3xl lg:max-w-4xl mx-auto relative z-10">
-        <div className="grid grid-cols-4 gap-2 min-[375px]:gap-3 md:gap-4 lg:gap-6">
+      <Container className="relative w-full">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 lg:gap-6">
           {cards.map((card) => (
             <GameCard
               key={card.id}
@@ -237,47 +221,47 @@ export default function MemoryGame() {
 
         {isWon && (
           <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-3xl" />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 rounded-3xl bg-[var(--color-navy)/0.4] backdrop-blur-sm"
+            />
 
             <div
               role="dialog"
               aria-modal="true"
               aria-label={`Permainan selesai dalam ${turns} langkah`}
-              className="relative w-full max-w-md mx-auto bg-slate-900 border border-amber-400/30 p-6 sm:p-8 rounded-3xl text-center shadow-[0_0_60px_rgba(245,158,11,0.15)]"
+              className="relative mx-auto w-full max-w-md rounded-3xl border border-border bg-surface p-6 text-center shadow-xl sm:p-8"
             >
-              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-amber-400/40 bg-amber-500/10">
-                <EmojiEvents className="text-amber-400" />
+              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-amber-800">
+                <Icon name="trophy" className="h-7 w-7" />
               </span>
 
-              <h2 className="text-3xl font-bold text-white mb-2">
-                Luar Biasa!
-              </h2>
+              <h2 className="heading-3 mb-2">Luar Biasa!</h2>
 
-              <p className="text-slate-300 mb-1">
+              <p className="body mb-1">
                 {TOTAL_PAIRS} pasangan dalam {turns} langkah
               </p>
               {isRecord ? (
-                <p className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-500/10 px-4 py-1 text-sm font-medium text-amber-300">
-                  <EmojiEvents style={{ fontSize: 14 }} aria-hidden="true" />
-                  Rekor terbaik baru!
+                <p className="mb-6">
+                  <Badge variant="accent">Rekor terbaik baru!</Badge>
                 </p>
               ) : (
-                <p className="text-slate-500 text-sm mb-6">
+                <p className="body-sm mb-6">
                   Terbaik: {best ?? turns} langkah
                 </p>
               )}
 
-              <button
+              <Button
                 onClick={shuffleCards}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 text-black font-semibold hover:bg-amber-400 transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+                variant="accent"
               >
-                <ReplayIcon className="w-5 h-5" />
+                <Icon name="refresh" className="h-5 w-5" />
                 Main Lagi
-              </button>
+              </Button>
             </div>
           </div>
         )}
-      </div>
+      </Container>
     </div>
   );
 }

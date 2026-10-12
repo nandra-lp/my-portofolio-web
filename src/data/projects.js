@@ -1,6 +1,8 @@
 /**
  * Data proyek terpusat — sebelumnya inline di `Projects.jsx`.
  * `slug` dipakai sebagai key React yang stabil (pengganti index array).
+ * `featured: true` → kartu unggulan (span 2 kolom, gambar lebih besar)
+ * `year` & `role` → metadata ditampilkan di kartu
  */
 export const projects = [
   {
@@ -13,6 +15,9 @@ export const projects = [
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
     link: "https://github.com/nandra-lp/project-rakamin-evermos",
     status: "completed",
+    featured: true,
+    year: "2024",
+    role: "Backend Developer",
   },
   {
     slug: "mykas",
@@ -24,6 +29,9 @@ export const projects = [
       "https://images.unsplash.com/photo-1579621970588-a3f5ce599fac?q=80&w=800&auto=format&fit=crop",
     link: "https://github.com/nandra-lp/mykas",
     status: "completed",
+    featured: false,
+    year: "2024",
+    role: "Mobile Developer",
   },
   {
     slug: "planetkita",
@@ -35,6 +43,9 @@ export const projects = [
       "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=800&auto=format&fit=crop",
     link: "https://github.com/nandra-lp/planetkita",
     status: "completed",
+    featured: true,
+    year: "2023",
+    role: "AR/Unity Developer",
   },
   {
     slug: "react-portfolio",
@@ -46,5 +57,8 @@ export const projects = [
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
     link: "https://github.com/nandra-lp/react-portfolio",
     status: "completed",
+    featured: false,
+    year: "2024",
+    role: "Frontend Developer",
   },
 ];

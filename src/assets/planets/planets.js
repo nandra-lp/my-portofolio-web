@@ -1,11 +1,11 @@
-import mercury from './merkurius.png'
-import venus from './venus.png'
-import earth from './bumi.png'
-import mars from './mars.png'
-import jupiter from './jupiter.png'
-import saturn from './saturnus.png'
-import uranus from './uranus.png'
-import neptune from './neptunus.png'
+import mercury from './merkurius.webp'
+import venus from './venus.webp'
+import earth from './bumi.webp'
+import mars from './mars.webp'
+import jupiter from './jupiter.webp'
+import saturn from './saturnus.webp'
+import uranus from './uranus.webp'
+import neptune from './neptunus.webp'
 
 export const cardImages = [
   { src: mercury, matched: false, name: 'Merkurius' },

@@ -1,0 +1,17 @@
+import { forwardRef } from "react";
+
+const Card = forwardRef(({ className = "", children, hover = false, ...props }, ref) => {
+  return (
+    <article
+      ref={ref}
+      className={`card ${hover ? "card-hover" : ""} ${className}`}
+      {...props}
+    >
+      {children}
+    </article>
+  );
+});
+
+Card.displayName = "Card";
+
+export { Card };

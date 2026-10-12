@@ -32,25 +32,19 @@ export default class ErrorBoundary extends React.Component {
           role="alert"
           className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 text-center"
         >
-          <h2 className="text-2xl font-semibold text-white">
-            Ups, ada yang tidak beres.
-          </h2>
-          <p className="max-w-md text-slate-400">
+          <h2 className="heading-3">Ups, ada yang tidak beres.</h2>
+          <p className="body max-w-md">
             Halaman gagal dimuat. Coba muat ulang, atau kembali ke beranda.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="rounded-xl border border-white/10 bg-white/10 px-6 py-3 font-medium text-white transition-all hover:border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-400"
+              className="btn-secondary"
             >
               Muat Ulang
             </button>
-            <Link
-              to="/"
-              onClick={this.handleReset}
-              className="rounded-xl bg-amber-500 px-6 py-3 font-semibold text-black transition-all hover:bg-amber-400"
-            >
+            <Link to="/" onClick={this.handleReset} className="btn-primary">
               Ke Beranda
             </Link>
           </div>

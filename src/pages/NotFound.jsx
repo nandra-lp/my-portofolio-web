@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Button } from "../components/ui/Button";
 
 export default function NotFound() {
   useEffect(() => {
@@ -11,22 +11,15 @@ export default function NotFound() {
   return (
     <>
       <Navbar />
-      <main className="relative flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
-        <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-amber-400/80">
-          404
-        </p>
-        <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">
-          Halaman tidak ditemukan
-        </h1>
-        <p className="mb-8 max-w-md text-slate-400">
+      <main className="flex min-h-[70vh] flex-col items-center justify-center bg-background px-6 text-center">
+        <p className="label mb-4">404</p>
+        <h1 className="heading-1 mb-4">Halaman tidak ditemukan</h1>
+        <p className="body mb-8 max-w-md">
           Alamat yang kamu tuju tidak ada atau sudah dipindahkan.
         </p>
-        <Link
-          to="/"
-          className="rounded-xl bg-amber-500 px-6 py-3 font-semibold text-black transition-all hover:bg-amber-400"
-        >
+        <Button to="/" variant="primary">
           Kembali ke Beranda
-        </Link>
+        </Button>
       </main>
       <Footer />
     </>

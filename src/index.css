@@ -1,20 +1,121 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-navy: #10233F;
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-light: #DBEAFE;
+  --color-accent: #F59E0B;
+  --color-accent-hover: #D97706;
+  --color-accent-light: #FEF3C7;
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F5F9;
+  --color-heading: #0F172A;
+  --color-text: #334155;
+  --color-muted: #64748B;
+  --color-muted-light: #94A3B8;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.1), 0 1px 2px -1px rgb(15 23 42 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.1), 0 8px 10px -6px rgb(15 23 42 / 0.1);
+
+  /* Neumorphism halus — khusus bagian Proyek (terang, dua arah). */
+  --shadow-neu: 5px 5px 14px rgb(15 23 42 / 0.08), -5px -5px 14px rgb(255 255 255 / 0.9);
+  --shadow-neu-lg: 10px 10px 26px rgb(15 23 42 / 0.1), -8px -8px 22px rgb(255 255 255 / 0.95);
+  --shadow-neu-inset: inset 4px 4px 10px rgb(15 23 42 / 0.08), inset -4px -4px 10px rgb(255 255 255 / 0.9);
+
+  --spacing-unit: 4px;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/*
+ * Dark Mode — Modern Minimalist Editorial (Midnight Blue).
+ * Semua token semantik di-override di sini sehingga utilitas Tailwind
+ * (bg-background, text-heading, border-border, ...) otomatis mengikuti
+ * tema tanpa duplikasi stylesheet atau variant `dark:` per elemen.
+ *
+ * Kontras (WCAG 2.2 AA) terhadap background #0B1120:
+ * - heading #F8FAFC ~17:1, body #CBD5E1 ~12:1, muted #94A3B8 ~7:1
+ * - primary #93C5FD (teks/tautan/ikon) ~8:1
+ * - tombol primer memakai biru jenuh #2563EB + teks putih (~5.2:1)
+ *   agar kontras tetap lolos, bukan biru muda.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-navy: #10233f;
+  --color-primary: #93c5fd;
+  --color-primary-hover: #bfdbfe;
+  --color-primary-light: rgb(147 197 253 / 0.13);
+  --color-accent: #fbbf24;
+  --color-accent-hover: #f59e0b;
+  --color-accent-light: rgb(251 191 36 / 0.14);
+  --color-background: #0b1120;
+  --color-surface: #111827;
+  --color-surface-hover: #1e293b;
+  --color-heading: #f8fafc;
+  --color-text: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-muted-light: #64748b;
+  --color-border: #334155;
+  --color-border-strong: #475569;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.45), 0 1px 2px -1px rgb(0 0 0 / 0.45);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.45), 0 2px 4px -2px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.55), 0 8px 10px -6px rgb(0 0 0 / 0.55);
+
+  /* Neumorphism gelap: bayangan terang nyaris hilang, kedalaman dari hitam. */
+  --shadow-neu: 6px 6px 18px rgb(0 0 0 / 0.45), -4px -4px 14px rgb(148 163 184 / 0.06);
+  --shadow-neu-lg: 10px 10px 28px rgb(0 0 0 / 0.55), -6px -6px 18px rgb(148 163 184 / 0.08);
+  --shadow-neu-inset: inset 4px 4px 10px rgb(0 0 0 / 0.5), inset -4px -4px 10px rgb(148 163 184 / 0.06);
+
+  --tw-ring-offset-color: #0b1120;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* Fokus keyboard yang selalu terlihat (pengganti focus:outline-none). */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
 :focus-visible {
-  outline: 2px solid #fbbf24;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Animation untuk reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -24,7 +125,317 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
 .animate-in {
   opacity: 1 !important;
   transform: translateY(0) scale(1) !important;
+}
+
+::selection {
+  background-color: var(--color-accent-light);
+  color: var(--color-navy);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-light);
+}
+
+/* ---------------------------------------------------------- */
+/* Motion editorial: entrance hero + ikon tema.              */
+/* Murni CSS (aman tanpa JS); nonaktif via reduced-motion.   */
+/* ---------------------------------------------------------- */
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-enter {
+  animation: hero-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+/* ---------------------------------------------------------- */
+/* Micro-interactions: press pada tombol, panah pada tautan.  */
+/* ---------------------------------------------------------- */
+
+.btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-accent {
+  transition-property: background-color, border-color, color, box-shadow, transform;
+  transition-duration: 200ms;
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-ghost:active,
+.btn-accent:active {
+  transform: scale(0.98);
+}
+
+/* ---------------------------------------------------------- */
+/* Penyesuaian komponen khusus Dark Mode.                     */
+/* ---------------------------------------------------------- */
+
+[data-theme="dark"] ::selection {
+  background-color: #1e40af;
+  color: #f8fafc;
+}
+
+/* Tombol primer: biru jenuh + teks putih agar kontras ≥ 4.5:1. */
+[data-theme="dark"] .btn-primary {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #1d4ed8;
+  color: #fff;
+}
+
+/* Tombol aksen: amber terang + teks navy pekat (~9:1). */
+[data-theme="dark"] .btn-accent {
+  background-color: #fbbf24;
+  color: #0b1120;
+}
+
+[data-theme="dark"] .btn-accent:hover {
+  background-color: #f59e0b;
+  color: #0b1120;
+}
+
+/* Tag/badge aksen & sukses versi gelap (teks terang di atas tint). */
+[data-theme="dark"] .tag-accent,
+[data-theme="dark"] .badge-accent {
+  background-color: var(--color-accent-light);
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .badge-success {
+  background-color: rgb(34 197 94 / 0.14);
+  color: #86efac;
+}
+
+/* Kontainer ikon trofi (MemoryGame) memakai utilitas mentah — selaraskan. */
+[data-theme="dark"] .bg-accent-light.text-amber-800 {
+  background-color: var(--color-accent-light);
+  color: #fbbf24;
+}
+
+/* Skip link: biru jenuh + teks putih agar kontras tetap lolos di dark. */
+[data-theme="dark"] .focus\:bg-primary:focus {
+  background-color: #2563eb;
+}
+
+/* Kartu: border subtle di dark mode */
+[data-theme="dark"] .card {
+  border-color: rgb(148 163 184 / 0.12);
+}
+
+/* Redam silau thumbnail proyek pada surface gelap. */
+[data-theme="dark"] .card img {
+  filter: brightness(0.94) saturate(0.98);
+  transition: transform 0.3s ease-out, filter 0.3s ease;
+}
+
+[data-theme="dark"] .card:hover img {
+  filter: brightness(1) saturate(1);
+}
+
+/* Logo bermuatan alpha: beri landasan terang agar monogram gelap terbaca. */
+[data-theme="dark"] .brand-logo {
+  background-color: #f1f5f9;
+  border-radius: 10px;
+}
+
+/* Toggle tema: ukuran tetap agar navbar tidak bergeser. */
+.theme-toggle {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+}
+
+.theme-toggle svg {
+  animation: theme-icon-in 0.25s ease;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.theme-toggle:active svg {
+  transform: scale(0.88) rotate(12deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter,
+  .theme-toggle svg {
+    animation: none;
+  }
+  .theme-toggle svg {
+    transition: none;
+  }
+  .theme-toggle:active svg {
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-narrow {
+    @apply mx-auto max-w-3xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .section-sm {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .heading-1 {
+    @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-heading;
+  }
+
+  .heading-2 {
+    @apply text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-heading;
+  }
+
+  .heading-3 {
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-heading;
+  }
+
+  .heading-4 {
+    @apply text-xl sm:text-2xl font-semibold tracking-tight text-heading;
+  }
+
+  .body-lg {
+    @apply text-lg leading-relaxed text-text;
+  }
+
+  .body {
+    @apply text-base leading-relaxed text-text;
+  }
+
+  .body-sm {
+    @apply text-sm leading-relaxed text-muted;
+  }
+
+  .label {
+    @apply text-sm font-medium uppercase tracking-wider text-muted;
+  }
+
+  .caption {
+    @apply text-xs font-medium uppercase tracking-wider text-muted;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-primary text-white hover:bg-primary-hover focus-visible:ring-primary;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover focus-visible:ring-primary;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-transparent text-text hover:bg-surface-hover focus-visible:ring-primary;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-accent text-navy hover:bg-accent-hover focus-visible:ring-accent;
+  }
+
+  .card {
+    @apply rounded-2xl border border-border bg-surface shadow-xs transition-[transform,box-shadow,border-color,background-color] duration-300 hover:border-border-strong hover:shadow-md;
+  }
+
+  .card-hover {
+    @apply hover:shadow-lg;
+  }
+
+  .tag {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors duration-200;
+  }
+
+  .tag-primary {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors duration-200 bg-primary-light text-primary;
+  }
+
+  .tag-accent {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors duration-200 bg-accent-light text-amber-800;
+  }
+
+  .tag-muted {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors duration-200 border border-border bg-surface-hover text-muted;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium bg-primary-light text-primary;
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium bg-accent-light text-amber-800;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium bg-green-100 text-green-700;
+  }
+
+  .badge-muted {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-border bg-surface-hover text-muted;
+  }
+
+  .link {
+    @apply font-medium text-primary underline underline-offset-2 transition-colors duration-200 hover:text-primary-hover;
+  }
+
+  .divider {
+    @apply h-px bg-border;
+  }
+
+  .divider-gradient {
+    @apply h-px bg-gradient-to-r from-transparent via-border to-transparent;
+  }
 }

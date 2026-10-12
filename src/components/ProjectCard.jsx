@@ -1,6 +1,7 @@
 import { useState } from "react";
-import CallMadeIcon from '@mui/icons-material/CallMade';
-import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
+import { Tag, Badge } from "./ui/Tag";
+import { Icon, GithubIcon } from "./ui/Icon";
+import { Button } from "./ui/Button";
 
 const STATUS_LABELS = {
   completed: "Selesai",
@@ -8,35 +9,35 @@ const STATUS_LABELS = {
   planned: "Rencana",
 };
 
-export default function ProjectCard({ title, description, tags = [], link, image, status }) {
+const STATUS_VARIANTS = {
+  completed: "success",
+  "in-progress": "primary",
+  planned: "muted",
+};
+
+export default function ProjectCard({
+  title,
+  description,
+  tags = [],
+  link,
+  image,
+  status,
+  featured = false,
+  year,
+  role,
+}) {
   // Fallback bila gambar eksternal (Unsplash) gagal dimuat.
   const [imgError, setImgError] = useState(false);
   const showImage = Boolean(image) && !imgError;
   const statusLabel = status ? STATUS_LABELS[status] : null;
 
-  return (
-    <article
-      className="
-        group relative overflow-hidden rounded-2xl flex flex-col h-full
-        border border-white/10
-        bg-slate-950/50 backdrop-blur-md
-        transition-all duration-500 ease-out
-        hover:-translate-y-2
-        hover:border-amber-500/30
-        hover:bg-slate-900/50
-        hover:shadow-[0_20px_40px_-20px_rgba(245,158,11,0.15)]
-        focus-within:-translate-y-2
-        focus-within:border-amber-500/30
-        focus-within:shadow-[0_20px_40px_-20px_rgba(245,158,11,0.15)]
-      "
-    >
-      {/* Subtle hover glow behind the card content */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-        <div className="absolute -top-1/2 -left-1/2 h-full w-full rounded-full bg-white/5 blur-[100px]" />
-      </div>
+  // Featured: aspect-[4/3] lebih tinggi, Regular: aspect-video (16:9)
+  const imageAspect = featured ? "aspect-[4/3]" : "aspect-video";
 
-      {/* Image Section */}
-      <div className="relative h-56 w-full overflow-hidden border-b border-white/5">
+  return (
+    <article className="card card-hover group flex h-full flex-col overflow-hidden">
+      {/* Screenshot */}
+      <div className={`relative w-full overflow-hidden border-b border-border bg-surface-hover ${imageAspect}`}>
         {showImage ? (
           <img
             src={image}
@@ -44,90 +45,66 @@ export default function ProjectCard({ title, description, tags = [], link, image
             loading="lazy"
             decoding="async"
             onError={() => setImgError(true)}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-slate-900/50">
-            <FolderSpecialIcon className="h-12 w-12 text-slate-700" />
-          </div>
-        )}
-
-        {/* Dark overlay for better blend */}
-        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-
-        {/* Status badge */}
-        {statusLabel && (
-          <span className="absolute top-4 left-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-3 py-1 text-xs font-medium text-slate-200 backdrop-blur-md">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            {statusLabel}
-          </span>
-        )}
-
-        {/* Floating Icon on Hover */}
-        <div aria-hidden="true" className="absolute top-4 right-4 z-20">
           <div
-            className="
-              flex items-center justify-center h-10 w-10
-              rounded-full border border-white/10
-              bg-black/50 backdrop-blur-md
-              transition-all duration-300
-              group-hover:bg-amber-500/20 group-hover:border-amber-500/50
-              opacity-0 scale-75 -translate-y-2
-              group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0
-            "
+            role="img"
+            aria-label={`Pratinjau tidak tersedia untuk proyek ${title}`}
+            className="flex h-full w-full items-center justify-center"
           >
-            <CallMadeIcon className="h-5 w-5 text-white group-hover:text-amber-400 transition-colors" />
-          </div>
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="relative z-10 flex flex-1 flex-col p-6">
-        {/* Title */}
-        <h3 className="mb-3 text-xl font-semibold text-white transition-colors duration-300 group-hover:text-slate-200">
-          {title}
-        </h3>
-
-        {/* Description */}
-        <p className="mb-6 text-sm leading-relaxed text-slate-400 flex-1">
-          {description}
-        </p>
-
-        {/* Tags */}
-        {tags.length > 0 && (
-          <div className="mt-auto flex flex-wrap gap-2 pt-4 border-t border-white/5">
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="
-                  rounded-md
-                  border border-white/10
-                  bg-white/5
-                  px-2.5 py-1
-                  text-xs font-medium text-slate-300
-                  transition-all duration-300
-                  group-hover:bg-amber-500/10
-                  group-hover:text-amber-400
-                  group-hover:border-amber-500/20
-                "
-              >
-                {tag}
-              </span>
-            ))}
+            <Icon name="folder" className="h-12 w-12 text-border-strong" />
           </div>
         )}
       </div>
 
-      {/* Invisible Link Wrapper — focusable dengan ring terlihat */}
-      {link && (
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute inset-0 z-20 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
-          aria-label={`Lihat proyek ${title} (terbuka di tab baru)`}
-        />
-      )}
+      {/* Konten */}
+      <div className="flex flex-1 flex-col p-6">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="text-xl font-semibold text-heading">{title}</h3>
+          {statusLabel && (
+            <Badge variant={STATUS_VARIANTS[status] ?? "muted"} className="flex-shrink-0">
+              {statusLabel}
+            </Badge>
+          )}
+        </div>
+
+        {year && (
+          <p className="caption mb-4">
+            {role ? `${role} • ${year}` : year}
+          </p>
+        )}
+
+        <p className="body-sm mb-6 flex-1">{description}</p>
+
+        {tags.length > 0 && (
+          <ul
+            aria-label={`Teknologi yang digunakan pada proyek ${title}`}
+            className="flex flex-wrap gap-2 mb-6"
+          >
+            {tags.map((tag) => (
+              <li key={tag}>
+                <Tag variant="muted">{tag}</Tag>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {link && (
+          <div className="mt-auto pt-5 border-t border-border">
+            <Button
+              href={link}
+              variant="ghost"
+              size="sm"
+              className="group/link"
+            >
+              <GithubIcon className="h-4 w-4" />
+              Source Code
+              <Icon name="arrowUpRight" className="h-4 w-4 transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+            </Button>
+          </div>
+        )}
+      </div>
     </article>
   );
 }
