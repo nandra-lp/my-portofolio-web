@@ -4,7 +4,7 @@ import { Icon } from "./ui/Icon";
 /**
  * Tombol pengalih Light/Dark Mode.
  * - Ikon matahari saat Dark Mode, ikon bulan saat Light Mode.
- * - Ukuran tetap (2.5rem) agar navbar tidak bergeser saat ditekan.
+ * - Ukuran tetap (44px) agar navbar tidak bergeser saat ditekan.
  */
 export default function ThemeToggle({ className = "" }) {
   const { isDark, toggleTheme } = useTheme();

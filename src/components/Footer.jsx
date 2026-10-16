@@ -9,7 +9,11 @@ export default function Footer() {
   const navigate = useNavigate();
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
   // Anchor footer bekerja dari route mana pun: navigate ke "/" dulu
@@ -32,25 +36,25 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="container-page py-12">
-        <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
+      <div className="container-page py-8 sm:py-10 lg:py-12">
+        <div className="flex flex-col items-center justify-between gap-6 lg:flex-row lg:gap-8">
           {/* Brand */}
           <div className="text-center lg:text-left">
-            <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
+            <div className="mb-2 flex items-center justify-center gap-2.5 lg:justify-start">
               <img
                 src={logo}
                 alt="Logo Nandra"
-                width="36"
-                height="36"
+                width="32"
+                height="32"
                 loading="lazy"
-                className="brand-logo h-9 w-9 object-contain"
+                className="brand-logo h-8 w-8 object-contain"
               />
               <div className="text-left">
                 <p className="text-base font-bold text-heading">Nandra</p>
                 <p className="text-sm text-muted">Full-stack Developer</p>
               </div>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-muted">
+            <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted sm:max-w-md lg:mx-0">
               Membangun pengalaman antarmuka web modern dengan barisan kode
               yang rapi dan arsitektur yang andal.
             </p>
@@ -78,33 +82,33 @@ export default function Footer() {
             </Social>
           </div>
 
-          {/* Back to Top */}
+          {/* Back to Top — icon-only di mobile agar ramping */}
           <button
             type="button"
             onClick={scrollToTop}
             aria-label="Kembali ke atas halaman"
-            className="group inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-heading"
+            className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-muted transition-colors hover:text-heading sm:px-3"
           >
-            Kembali ke atas
+            <span className="hidden sm:inline">Kembali ke atas</span>
             <span className="rounded-full border border-border bg-surface p-2 transition-colors group-hover:border-primary/40 group-hover:bg-primary-light group-hover:text-primary">
               <Icon name="arrowUp" className="h-4 w-4" />
             </span>
           </button>
         </div>
 
-        <div className="divider my-8" aria-hidden="true" />
+        <div className="divider my-6 lg:my-8" aria-hidden="true" />
 
-        <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-3 text-center md:flex-row">
           <p className="text-sm text-muted">
             © {year} Nandra. Hak cipta dilindungi.
           </p>
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-1">
             {navLinks.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => handleFooterNav(item.id)}
-                className="rounded text-sm font-medium text-muted transition-colors hover:text-heading"
+                className="rounded px-1 py-2 text-sm font-medium text-muted transition-colors hover:text-heading"
               >
                 {item.label}
               </button>
@@ -126,7 +130,7 @@ function Social({ href, label, children }) {
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       aria-label={label}
       title={label}
-      className="flex rounded-full border border-border bg-surface p-2.5 text-muted transition-colors duration-200 hover:border-primary/40 hover:bg-primary-light hover:text-primary"
+      className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border bg-surface p-2.5 text-muted transition-colors duration-200 hover:border-primary/40 hover:bg-primary-light hover:text-primary"
     >
       {children}
     </a>

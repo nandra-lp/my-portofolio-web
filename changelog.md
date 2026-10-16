@@ -2,6 +2,153 @@
 
 > Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/).
 
+## [Unreleased] — Refaktor Hero Intro
+
+### Changed (`src/components/Intro.jsx`)
+
+- H1 "Nandra Luthfi" kini satu warna solid (aksen satu kata dihapus) —
+  tipografi sendiri yang membawa hierarki.
+- Divider dekoratif tanpa informasi dihapus; ritme vertikal murni dari
+  skala spacing.
+- Tech stack `Tag muted` → `primary` agar identitas teknologi tampil hidup
+  dalam satu keluarga aksen brand.
+- Dot status `bg-green-500` → `bg-green-600` (selaras teks `badge-success`,
+  terbaca di dark mode).
+- CTA primer "Lihat Proyek" mendapat micro-interaction panah
+  (`group-hover:translate-x-0.5`), konsisten dengan pola `Projects.jsx`.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
+## [Unreleased] — Refaktor ProjectCard
+
+### Changed (`src/components/ProjectCard.jsx`)
+
+- `cursor-pointer` pada `<article>` non-interaktif dihapus (menyesatkan;
+  aksi tetap lewat tombol eksplisit).
+- Judul mendapat `tracking-tight` + transisi warna ke `primary` saat kartu
+  di-hover.
+- Meta role/tahun dari `caption` uppercase → `text-xs` normal case.
+- Deskripsi diberi `line-clamp-3` agar tinggi kartu sejajar (footer tetap
+  rata bawah via `mt-auto` yang sudah ada).
+- Kedua tombol footer diberi `min-h-11` (target sentuh 44px) tanpa mengubah
+  komponen `Button` global.
+- Label "To Website" → "Lihat Website" (konsisten bahasa Indonesia).
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
+## [Unreleased] — Refaktor Navbar
+
+### Changed (`src/components/Navbar.jsx`, `index.css`, `ThemeToggle.jsx`)
+
+- Tinggi bar/spacer dari inline `style` → utilitas `h-18` (= `NAV_HEIGHT`
+  72px; terkonfirmasi ter-generate di CSS produksi).
+- Indikator link aktif dari `w-[calc(100%-2.5rem)]` + centering → `inset-x-5`
+  (tanpa kalkulasi rapuh, tanpa layout shift).
+- Press feedback halus (`active:scale`) pada link desktop, link mobile,
+  dan logo; class `group` tak terpakai dihapus.
+- Subtitle brand dari `caption` uppercase → `text-xs` normal case.
+- Toggle mobile 40px → 44px (`p-2.5`, `rounded-full` selaras ThemeToggle).
+- Toggle tema 40px → 44px (`.theme-toggle` 2.75rem + komentar diperbarui).
+- Focus management menu mobile: dibuka → fokus ke item pertama; ditutup via
+  Escape → fokus kembali ke toggle.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
+## [Unreleased] — Refaktor Halaman Playground
+
+### Changed (`src/pages/Playground.jsx`, `MemoryGame.jsx`, `GameCard.jsx`, `index.css`)
+
+- CTA hero naik `secondary sm` → `primary` berlabel "Main Planet Memory"
+  (satu aksi primer yang jelas).
+- Eyebrow "Playground" ganda di header game dihapus; tambah petunjuk
+  keyboard yang tenang.
+- Board dibungkus panel arena (`rounded-2xl`, token border/surface/shadow);
+  overlay menang mengikuti bentuk panel.
+- Grid `sm:3 kolom` → `md:4 kolom` (4×4 simetris untuk 16 kartu di
+  tablet/desktop).
+- Entrance stagger kartu (`.card-enter`, ±30 ms/kartu, replay tiap acak
+  ulang) + wajah cocok bertinta `border-primary/60` + ikon cover membesar
+  saat hover; tercakup `prefers-reduced-motion`.
+- Dialog menang: baris statistik Langkah/Terbaik (`tabular-nums`); badge
+  rekor hanya saat relevan.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
+## [Unreleased] — Footer Ramping Mobile
+
+### Changed (`src/components/Footer.jsx`)
+
+- Padding vertikal mobile-first (`py-8 sm:py-10`, desktop tetap `lg:py-12`);
+  gap blok dan divider dipadatkan di mobile.
+- Brand dipadatkan (logo `h-8`, deskripsi `max-w-xs` di mobile).
+- Back-to-top menjadi icon-only di mobile (teks `hidden sm:inline`).
+- Target sentuh: tombol sosial `min-h-11 min-w-11`, link navigasi `px-1 py-2`,
+  back-to-top `min-h-11`.
+- `scrollToTop` menghormati `prefers-reduced-motion`.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
+## [Unreleased] — Pengacakan Kartu CSPRNG
+
+### Changed (`src/pages/MemoryGame.jsx`)
+
+- `secureRandomInt()` baru: `crypto.getRandomValues()` + rejection sampling
+  anti modulo-bias, fallback `Math.random`; shuffle Fisher-Yates kini
+  memakainya (sebelumnya PRNG `Math.random` yang dapat diprediksi).
+- `generateId()`: `randomUUID` → `getRandomValues` hex → fallback lama.
+- `createShuffledCards()`: layout dengan kartu kembar bersebelahan ditolak
+  dan diacak ulang hingga bersih (maks 50x, simpan yang terbaik). Teruji
+  500/500 bersih dengan sebaran posisi merata.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses; simulasi Node 500 sampel
+  (lihat ringkasan sesi).
+
+## [Unreleased] — Perapihan Layout Desktop Playground
+
+### Changed (`src/pages/Playground.jsx`, `MemoryGame.jsx`)
+
+- Hero dipadatkan (`lg:pt-12 lg:pb-8`, margin dalam diketatkan).
+- Board dibatasi `lg:max-w-4xl` agar kartu tidak melebar di desktop;
+  header memakai `Container narrow` selaras hero.
+- Fokus dikembalikan ke "Mulai Ulang" setelah dialog menang ditutup.
+- `StatPill` "Terbaik" diberi `role="status"` (`aria-label` tanpa role
+  diabaikan screen reader).
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
+## [Unreleased] — Penyelarasan UI/UX Playground dengan Design System
+
+### Changed (`src/pages/Playground.jsx`, `MemoryGame.jsx`, `GameCard.jsx`, `ui/StatPill.jsx`)
+
+- Hero disamakan dengan pola `Project.jsx` (spacing, badge dot `bg-accent`,
+  `max-w-xl`); badge klik non-semantik diganti tombol anchor ke
+  `#planet-memory-game`.
+- `MemoryGame`: `<div>` → `<section>` berlabel, `h1` ganda → `h2`, backdrop
+  mentah → token `bg-navy/40`, dialog pakai `.card`, fokus otomatis ke
+  "Main Lagi", progres memakai `role="progressbar"`.
+- `StatPill` dilepas dari `Container` (bug: menyuntik `max-w-7xl` ke dalam
+  pil) → `div inline-flex rounded-full` + angka `tabular-nums`.
+- `GameCard`: handler keyboard/`tabIndex` redundan dihapus, perspective via
+  utilitas Tailwind, nama planet minimum `text-xs`.
+
+### Verifikasi
+
+- `npm run lint` bersih, `npm run build` sukses.
+
 ## [Unreleased] — Sentuhan Neumorphism Bagian Proyek
 
 ### Added (`src/index.css`, `ProjectCard.jsx`, `Projects.jsx`)

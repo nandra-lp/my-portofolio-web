@@ -26,11 +26,11 @@ export default function Projects() {
   }
 
   return (
-    <Section id="projects" className="bg-background">
+    <Section id="projects" className="bg-background !pt-0 sm:!pt-0 lg:!pt-0 !pb-16 sm:!pb-20 lg:!pb-20">
       <Container>
         {/* Featured Projects — span 2 kolom di lg+ */}
         {featuredProjects.length > 0 && (
-          <div className="grid gap-6 lg:grid-cols-2 mb-12">
+          <div className="grid gap-5 lg:grid-cols-2 lg:gap-6 mb-10 max-w-6xl mx-auto">
             {featuredProjects.map((project) => (
               <ProjectCard key={project.slug} {...project} featured />
             ))}
@@ -39,7 +39,7 @@ export default function Projects() {
 
         {/* Regular Projects — grid 2 kolom */}
         {regularProjects.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+          <div className="grid gap-5 md:grid-cols-2 lg:gap-6 max-w-6xl mx-auto">
             {regularProjects.map((project) => (
               <ProjectCard key={project.slug} {...project} />
             ))}
@@ -47,19 +47,19 @@ export default function Projects() {
         )}
 
         {/* CTA Section */}
-        <div className="mt-16 border-t border-border pt-12 text-center">
-          <p className="body-lg mb-8">
+        <div className="mt-12 border-t border-border pt-10 text-center">
+          <p className="body-lg lg:text-base mb-6">
             Ingin melihat proses dan kode lengkapnya?
           </p>
           <Button
             href="https://github.com/nandra-lp"
-            variant="secondary"
-            size="lg"
-            className="group shadow-neu hover:shadow-neu-lg active:shadow-neu-inset"
+            variant="primary"
+            size="md"
+            className="group shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
           >
-            <GithubIcon className="h-5 w-5" />
-            <span className="font-medium">Kunjungi GitHub Saya</span>
-            <Icon name="arrowRight" className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+            <GithubIcon className="h-4 w-4" />
+            Kunjungi GitHub Saya
+            <Icon name="arrowRight" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
           </Button>
         </div>
       </Container>

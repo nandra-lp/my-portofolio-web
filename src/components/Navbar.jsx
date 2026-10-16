@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NAV_HEIGHT, scrollToSection, waitForElement } from "../utils/scroll";
 import { Icon } from "./ui/Icon";
@@ -26,6 +26,9 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const menuRef = useRef(null);
+  const toggleRef = useRef(null);
+
   const activeSection = ROUTE_SECTION[location.pathname] ?? rootActiveSection;
 
   // Scroll state — di-throttle via rAF agar tidak re-render per piksel.
@@ -44,14 +47,24 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Tutup menu mobile dengan tombol Escape.
+  // Tutup menu mobile dengan tombol Escape + kembalikan fokus ke toggle.
   useEffect(() => {
     if (!mobileMenuOpen) return;
     const onKeyDown = (e) => {
-      if (e.key === "Escape") setMobileMenuOpen(false);
+      if (e.key === "Escape") {
+        setMobileMenuOpen(false);
+        toggleRef.current?.focus();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileMenuOpen]);
+
+  // Saat menu dibuka, arahkan fokus ke item pertama agar navigasi
+  // keyboard/screen reader langsung masuk ke menu.
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    menuRef.current?.querySelector("button")?.focus();
   }, [mobileMenuOpen]);
 
   // Tandai section aktif di route "/" via IntersectionObserver.
@@ -112,14 +125,12 @@ export default function Navbar() {
         className={`fixed top-0 z-50 w-full border-b transition-colors duration-200 ${navClass}`}
       >
         <div className="container-page">
-          <div
-            className="flex items-center justify-between"
-            style={{ height: NAV_HEIGHT }}
-          >
+          {/* h-18 (72px) = NAV_HEIGHT; utilitas agar tidak inline style. */}
+          <div className="flex h-18 items-center justify-between">
             {/* Logo */}
             <button
               onClick={() => handleNavClick("home")}
-              className="group flex items-center gap-3 rounded-lg"
+              className="flex items-center gap-3 rounded-lg transition-transform duration-200 active:scale-[0.98]"
               aria-label="Kembali ke beranda"
             >
               <img
@@ -133,7 +144,7 @@ export default function Navbar() {
                 <span className="text-base font-bold text-heading">
                   Nandra Luthfi
                 </span>
-                <span className="caption">Full-stack Developer</span>
+                <span className="text-xs text-muted">Full-stack Developer</span>
               </span>
             </button>
 
@@ -161,11 +172,12 @@ export default function Navbar() {
               <ThemeToggle />
 
               <button
+                ref={toggleRef}
                 onClick={() => setMobileMenuOpen((v) => !v)}
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-menu"
                 aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
-                className="-mr-2 rounded-lg p-2 text-muted transition-colors hover:bg-surface-hover hover:text-heading lg:hidden"
+                className="-mr-2.5 rounded-full p-2.5 text-muted transition-[color,background-color,transform] duration-200 hover:bg-surface-hover hover:text-heading active:scale-95 lg:hidden"
               >
                 <Icon name={mobileMenuOpen ? "close" : "menu"} className="h-6 w-6" />
               </button>
@@ -175,6 +187,7 @@ export default function Navbar() {
           {/* Mobile Menu Dropdown — inert saat tertutup agar tak bisa di-tab */}
           <div
             id="mobile-menu"
+            ref={menuRef}
             inert={!mobileMenuOpen}
             className={`grid transition-all duration-300 ease-in-out lg:hidden ${
               mobileMenuOpen
@@ -204,7 +217,7 @@ export default function Navbar() {
       </nav>
 
       {/* Spacer to prevent layout shift */}
-      <div style={{ height: NAV_HEIGHT }} aria-hidden="true" />
+      <div className="h-18" aria-hidden="true" />
     </>
   );
 }
@@ -216,7 +229,7 @@ function DesktopNavLink({ item, isActive, onNavigate }) {
     <button
       onClick={() => onNavigate(item.id)}
       aria-current={isActive ? "page" : undefined}
-      className={`relative rounded-full px-5 py-2.5 text-sm font-medium transition-colors duration-200 ${
+      className={`relative rounded-full px-5 py-2.5 text-sm font-medium transition-[color,background-color,transform] duration-200 active:scale-[0.97] ${
         isActive
           ? "text-primary"
           : "text-muted hover:bg-surface-hover hover:text-heading"
@@ -225,8 +238,8 @@ function DesktopNavLink({ item, isActive, onNavigate }) {
       {item.label}
       <span
         aria-hidden="true"
-        className={`absolute bottom-1.5 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-primary transition-all duration-200 ${
-          isActive ? "w-[calc(100%-2.5rem)] opacity-100" : "w-0 opacity-0"
+        className={`absolute inset-x-5 bottom-1.5 h-0.5 rounded-full bg-primary transition-all duration-200 ${
+          isActive ? "opacity-100" : "opacity-0"
         }`}
       />
     </button>
@@ -238,7 +251,7 @@ function MobileNavLink({ item, isActive, onNavigate }) {
     <button
       onClick={() => onNavigate(item.id)}
       aria-current={isActive ? "page" : undefined}
-      className={`rounded-xl border px-5 py-3.5 text-left text-sm font-medium transition-colors duration-200 ${
+      className={`rounded-xl border px-5 py-3.5 text-left text-sm font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.99] ${
         isActive
           ? "border-primary/30 bg-primary-light text-primary"
           : "border-transparent text-muted hover:bg-surface-hover hover:text-heading"

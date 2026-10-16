@@ -3,7 +3,11 @@
  * `slug` dipakai sebagai key React yang stabil (pengganti index array).
  * `featured: true` → kartu unggulan (span 2 kolom, gambar lebih besar)
  * `year` & `role` → metadata ditampilkan di kartu
+ * `imageFit: "contain"` → untuk logo/aset square agar tampil utuh (tidak ter-crop)
  */
+import mykasLogo from "../assets/mkas-comp.png";
+import moonindieCover from "../assets/cgy.jpeg";
+
 export const projects = [
   {
     slug: "evermos-internship",
@@ -16,7 +20,7 @@ export const projects = [
     link: "https://github.com/nandra-lp/project-rakamin-evermos",
     status: "completed",
     featured: true,
-    year: "2024",
+    year: "2026",
     role: "Backend Developer",
   },
   {
@@ -25,12 +29,13 @@ export const projects = [
     description:
       "Aplikasi tabungan sederhana yang dibuat sebagai latihan Flutter dan Supabase. Fokus pada pencatatan saldo, autentikasi pengguna, dan penyimpanan data secara realtime.",
     tags: ["Flutter", "Supabase", "Dart"],
-    image:
-      "https://images.unsplash.com/photo-1579621970588-a3f5ce599fac?q=80&w=800&auto=format&fit=crop",
+    image: mykasLogo,
+    imageFit: "contain",
+    imageBg: "#0e2235",
     link: "https://github.com/nandra-lp/mykas",
     status: "completed",
     featured: false,
-    year: "2024",
+    year: "2025",
     role: "Mobile Developer",
   },
   {
@@ -44,21 +49,24 @@ export const projects = [
     link: "https://github.com/nandra-lp/planetkita",
     status: "completed",
     featured: true,
-    year: "2023",
+    year: "2025",
     role: "AR/Unity Developer",
   },
   {
-    slug: "react-portfolio",
-    title: "Portfolio Website",
+    slug: "moonindie-store",
+    title: "MoonIndie Store",
     description:
-      "Website portfolio pribadi untuk mendokumentasikan proses belajar React. Menggunakan desain minimal, animasi ringan, dan layout responsif.",
-    tags: ["React", "Tailwind CSS", "Animation"],
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
+      "Web pemesanan printing custom — katalog produk, kustomisasi desain, dan pemesanan online yang terhubung langsung ke toko.",
+    tags: ["Next.js", "Tailwind CSS", "Netlify"],
+    image: moonindieCover,
+    imageFit: "contain",
+    imageBg: "#0b0b0c",
+    imagePadding: "p-0",
     link: "https://github.com/nandra-lp/react-portfolio",
+    demo: "https://moonindiestore.netlify.app/",
     status: "completed",
     featured: false,
-    year: "2024",
+    year: "2026",
     role: "Frontend Developer",
   },
 ];

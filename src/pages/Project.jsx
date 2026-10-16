@@ -15,18 +15,18 @@ export default function Project() {
     <>
       <Navbar />
       <main className="bg-background">
-        <section id="projects-hero" className="bg-background pt-16 pb-12 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20">
+        <section id="projects-hero" className="bg-background pt-12 pb-10 sm:pt-14 sm:pb-12 lg:pt-16 lg:pb-12">
           <Container narrow className="text-center">
-            <span className="badge-accent inline-flex items-center gap-1.5 mb-6">
+            <span className="badge-accent inline-flex items-center gap-1.5 mb-4 lg:mb-5">
               <span aria-hidden="true" className="h-2 w-2 rounded-full bg-amber-500" />
               {projects.length} Proyek Dikembangkan
             </span>
 
-            <h1 className="heading-1 mb-4">
+            <h1 className="heading-1 lg:text-5xl mb-3">
               Proyek <span className="text-primary">Pilihan</span>
             </h1>
 
-            <p className="body-lg mx-auto max-w-2xl mb-8">
+            <p className="body-lg lg:text-base mx-auto max-w-xl mb-6">
               Kumpulan proyek yang saya bangun selama perjalanan belajar —
               dari eksperimen kecil hingga aplikasi full-stack pratinjau.
             </p>

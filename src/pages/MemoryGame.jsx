@@ -10,11 +10,34 @@ import { StatPill } from "../components/ui/StatPill";
 const BEST_SCORE_KEY = "planet-memory-best";
 const TOTAL_PAIRS = cardImages.length;
 
+/** Integer acak 0..maxExclusive-1. CSPRNG bila tersedia, fallback Math.random. */
+function secureRandomInt(maxExclusive) {
+  if (maxExclusive <= 1) return 0;
+  try {
+    if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+      const range = maxExclusive;
+      const maxUint32 = 0xffffffff;
+      // Rejection sampling agar tidak modulo-bias.
+      const limit = maxUint32 - (maxUint32 % range);
+      const out = new Uint32Array(1);
+      let value = limit;
+      while (value >= limit) {
+        crypto.getRandomValues(out);
+        value = out[0];
+      }
+      return value % range;
+    }
+  } catch {
+    // abaikan: fallback ke Math.random di bawah.
+  }
+  return Math.floor(Math.random() * maxExclusive);
+}
+
 /** Fisher-Yates shuffle — uniform, tidak bias seperti sort(() => Math.random() - 0.5). */
 function shuffleArray(array) {
   const result = [...array];
   for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = secureRandomInt(i + 1);
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
@@ -22,14 +45,44 @@ function shuffleArray(array) {
 
 /** crypto.randomUUID tidak tersedia di browser lama / non-secure context. */
 function generateId() {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID();
+  try {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+    if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch {
+    // abaikan: pakai fallback di bawah.
   }
   return `card-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/** Hitung pasangan identik yang bersebelahan (linear) — layout seperti ini terlalu mudah. */
+function countAdjacentPairs(deck) {
+  let count = 0;
+  for (let i = 0; i < deck.length - 1; i += 1) {
+    if (deck[i].src === deck[i + 1].src) count += 1;
+  }
+  return count;
+}
+
 function createShuffledCards() {
-  return shuffleArray([...cardImages, ...cardImages]).map((card) => ({
+  const base = [...cardImages, ...cardImages];
+  let best = shuffleArray(base);
+  let bestScore = countAdjacentPairs(best);
+  // Tolak layout yang memberi pasangan gratis; coba lagi hingga bersih (max 50x).
+  for (let attempt = 1; attempt < 50 && bestScore > 0; attempt += 1) {
+    const candidate = shuffleArray(base);
+    const score = countAdjacentPairs(candidate);
+    if (score < bestScore) {
+      best = candidate;
+      bestScore = score;
+    }
+  }
+  return best.map((card) => ({
     ...card,
     id: generateId(),
     matched: false,
@@ -56,6 +109,9 @@ export default function MemoryGame() {
   const [best, setBest] = useState(readBestScore);
 
   const timersRef = useRef([]);
+  const playAgainRef = useRef(null);
+  const restartRef = useRef(null);
+  const prevWonRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((timer) => clearTimeout(timer));
@@ -67,6 +123,17 @@ export default function MemoryGame() {
       timersRef.current.forEach((timer) => clearTimeout(timer));
     };
   }, []);
+
+  useEffect(() => {
+    if (isWon) {
+      playAgainRef.current?.focus();
+    } else if (prevWonRef.current) {
+      // Dialog menang baru saja ditutup via "Main Lagi" —
+      // kembalikan fokus agar tidak hilang ke <body>.
+      restartRef.current?.focus();
+    }
+    prevWonRef.current = isWon;
+  }, [isWon]);
 
   const shuffleCards = useCallback(() => {
     clearTimers();
@@ -147,34 +214,34 @@ export default function MemoryGame() {
   const isRecord = isWon && best !== null && turns <= best;
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-background px-4 pb-20 pt-16">
+    <section id="planet-memory-game" aria-label="Game Planet Memory" className="scroll-mt-20 bg-background pb-12 sm:pb-16 lg:scroll-mt-24 lg:pb-16">
       {/* Header */}
-      <Container className="mb-8 flex w-full flex-col items-center gap-5 text-center">
-        <span className="inline-flex items-center gap-3">
-          <span className="h-px w-10 bg-border" aria-hidden="true" />
-          <span className="label">Playground</span>
-          <span className="h-px w-10 bg-border" aria-hidden="true" />
-        </span>
-
+      <Container narrow className="mb-6 flex w-full flex-col items-center gap-4 text-center sm:mb-8 lg:mb-6">
         <div>
-          <h1 className="heading-2">Planet Memory</h1>
+          <h2 className="heading-2">Planet Memory</h2>
           <p className="body-sm mt-2">
             Temukan semua {TOTAL_PAIRS} pasangan planet
           </p>
         </div>
 
         {/* HUD — selaras: semua pil memakai StatPill yang sama */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           <StatPill label="Langkah" value={turns} live />
 
           <StatPill label="Pasangan" value={`${matchedPairs}/${TOTAL_PAIRS}`}>
-            <span className="ml-3 inline-block h-1.5 w-16 overflow-hidden rounded-full bg-border align-middle sm:w-20">
+            <span
+              role="progressbar"
+              aria-valuenow={progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`Progres ${progress} persen`}
+              className="ml-3 inline-block h-1.5 w-16 overflow-hidden rounded-full bg-border align-middle sm:w-20"
+            >
               <span
                 className="block h-full rounded-full bg-primary transition-all duration-500 motion-reduce:transition-none"
                 style={{ width: `${progress}%` }}
               />
             </span>
-            <span className="sr-only">{`Progres ${progress} persen`}</span>
           </StatPill>
 
           {/* Selalu dirender (tampil "–" bila belum ada) agar HUD tidak bergeser */}
@@ -182,6 +249,7 @@ export default function MemoryGame() {
             label="Terbaik"
             value={best ?? "–"}
             accent
+            role="status"
             aria-label={
               best !== null
                 ? `Skor terbaik ${best} langkah`
@@ -190,78 +258,100 @@ export default function MemoryGame() {
           />
 
           <Button
+            ref={restartRef}
             onClick={shuffleCards}
             variant="secondary"
             size="sm"
-            className="shadow-sm"
+            className="shadow-xs"
           >
-            <Icon name="refresh" className="h-4 w-4" />
+            <Icon name="refresh" className="h-4 w-4" aria-hidden="true" />
             <span className="font-medium">Mulai Ulang</span>
           </Button>
         </div>
+
+        <p className="text-xs text-muted">
+          Dapat dimainkan dengan keyboard — Tab untuk berpindah, Enter untuk membuka kartu.
+        </p>
       </Container>
 
-      {/* Game Grid */}
-      <Container className="relative w-full">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 lg:gap-6">
-          {cards.map((card) => (
-            <GameCard
-              key={card.id}
-              card={card}
-              handleChoice={handleChoice}
-              flipped={
-                card.id === choiceOne?.id ||
-                card.id === choiceTwo?.id ||
-                card.matched
-              }
-              disabled={disabled}
-            />
-          ))}
-        </div>
-
-        {isWon && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 rounded-3xl bg-[var(--color-navy)/0.4] backdrop-blur-sm"
-            />
-
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-label={`Permainan selesai dalam ${turns} langkah`}
-              className="relative mx-auto w-full max-w-md rounded-3xl border border-border bg-surface p-6 text-center shadow-xl sm:p-8"
-            >
-              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-amber-800">
-                <Icon name="trophy" className="h-7 w-7" />
-              </span>
-
-              <h2 className="heading-3 mb-2">Luar Biasa!</h2>
-
-              <p className="body mb-1">
-                {TOTAL_PAIRS} pasangan dalam {turns} langkah
-              </p>
-              {isRecord ? (
-                <p className="mb-6">
-                  <Badge variant="accent">Rekor terbaik baru!</Badge>
-                </p>
-              ) : (
-                <p className="body-sm mb-6">
-                  Terbaik: {best ?? turns} langkah
-                </p>
-              )}
-
-              <Button
-                onClick={shuffleCards}
-                variant="accent"
-              >
-                <Icon name="refresh" className="h-5 w-5" />
-                Main Lagi
-              </Button>
-            </div>
+      {/* Arena — panel pengelompok agar board terbaca sebagai satu kesatuan */}
+      <Container narrow className="w-full lg:max-w-4xl">
+        <div className="relative rounded-2xl border border-border bg-surface p-3 shadow-xs sm:p-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+            {cards.map((card, index) => (
+              <GameCard
+                key={card.id}
+                card={card}
+                index={index}
+                handleChoice={handleChoice}
+                flipped={
+                  card.id === choiceOne?.id ||
+                  card.id === choiceTwo?.id ||
+                  card.matched
+                }
+                disabled={disabled}
+              />
+            ))}
           </div>
-        )}
+
+          {isWon && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 rounded-2xl bg-navy/40 backdrop-blur-sm"
+              />
+
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={`Permainan selesai dalam ${turns} langkah`}
+                className="card relative mx-auto w-full max-w-md p-6 text-center sm:p-8"
+              >
+                <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light text-amber-800">
+                  <Icon name="trophy" className="h-7 w-7" aria-hidden="true" />
+                </span>
+
+                <h3 className="heading-3 mb-2">Luar Biasa!</h3>
+
+                <p className="body mb-4">
+                  {TOTAL_PAIRS} pasangan dalam {turns} langkah
+                </p>
+
+                <dl className="mb-6 flex items-center justify-center gap-6">
+                  <div>
+                    <dt className="caption">Langkah</dt>
+                    <dd className="mt-1 text-2xl font-bold tabular-nums text-heading">
+                      {turns}
+                    </dd>
+                  </div>
+                  <div aria-hidden="true" className="h-10 w-px bg-border" />
+                  <div>
+                    <dt className="caption">Terbaik</dt>
+                    <dd className="mt-1 text-2xl font-bold tabular-nums text-heading">
+                      {best ?? turns}
+                    </dd>
+                  </div>
+                </dl>
+
+                {isRecord && (
+                  <p className="mb-6">
+                    <Badge variant="accent">Rekor terbaik baru!</Badge>
+                  </p>
+                )}
+
+                <Button
+                  ref={playAgainRef}
+                  onClick={shuffleCards}
+                  variant="accent"
+                >
+                  <Icon name="refresh" className="h-5 w-5" aria-hidden="true" />
+                  Main Lagi
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </Container>
-    </div>
+    </section>
   );
 }

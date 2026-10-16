@@ -14,7 +14,7 @@ export default function Intro() {
           <span className="badge-success">
             <span
               aria-hidden="true"
-              className="h-2 w-2 rounded-full bg-green-500"
+              className="h-2 w-2 rounded-full bg-green-600"
             />
             Tersedia untuk kolaborasi
           </span>
@@ -22,7 +22,7 @@ export default function Intro() {
 
         {/* Headline */}
         <h1 className="heading-1 hero-enter" style={{ animationDelay: "60ms" }}>
-          Nandra <span className="text-primary">Luthfi</span>
+          Nandra Luthfi
         </h1>
 
         <p
@@ -31,12 +31,6 @@ export default function Intro() {
         >
           Full-stack Developer
         </p>
-
-        <div
-          aria-hidden="true"
-          className="hero-enter mx-auto mt-6 h-px w-24 bg-border"
-          style={{ animationDelay: "120ms" }}
-        />
 
         {/* Deskripsi singkat */}
         <p
@@ -55,7 +49,7 @@ export default function Intro() {
         >
           {TECH_STACK.map((t) => (
             <li key={t}>
-              <Tag variant="muted">{t}</Tag>
+              <Tag variant="primary">{t}</Tag>
             </li>
           ))}
         </ul>
@@ -65,9 +59,9 @@ export default function Intro() {
           className="hero-enter mt-10 flex flex-wrap justify-center gap-3"
           style={{ animationDelay: "240ms" }}
         >
-          <Button to="/project" variant="primary" size="lg">
+          <Button to="/project" variant="primary" size="lg" className="group">
             Lihat Proyek
-            <Icon name="arrowRight" className="h-4 w-4" />
+            <Icon name="arrowRight" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
           </Button>
           <Button href="#contact" variant="secondary" size="lg">
             <Icon name="mail" className="h-4 w-4" />
