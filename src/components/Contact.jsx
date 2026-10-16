@@ -3,13 +3,30 @@ import { Button } from "./ui/Button";
 import { Container, Section, SectionHeader } from "./ui/Container";
 import { Reveal } from "./ui/Reveal";
 
-const CONTACTS = [
-  { href: "https://wa.me/6281318925381", icon: "chat", label: "WhatsApp" },
-  { href: "mailto:hello@nandra.com", icon: "mail", label: "Email" },
-  { href: "https://github.com/nandra-lp", icon: "github", label: "GitHub" },
-  { href: "https://linkedin.com/in/USERNAME", icon: "linkedin", label: "LinkedIn" },
-  { href: "https://instagram.com/nandraluthfii", icon: "instagram", label: "Instagram" },
-];
+const WHATSAPP_URL = "https://wa.me/6281318925381";
+
+const CONTACT_ICON_CLASS =
+  "h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5";
+
+function ChatIcon({ className }) {
+  return <Icon name="chat" className={className} />;
+}
+
+function MailIcon({ className }) {
+  return <Icon name="mail" className={className} />;
+}
+
+function GithubMark({ className }) {
+  return <GithubIcon className={className} />;
+}
+
+function LinkedinIcon({ className }) {
+  return <Icon name="linkedin" className={className} />;
+}
+
+function InstagramIcon({ className }) {
+  return <Icon name="instagram" className={className} />;
+}
 
 export default function Contact() {
   return (
@@ -24,30 +41,51 @@ export default function Contact() {
         </Reveal>
 
         <Reveal>
-          <div className="card mx-auto max-w-3xl p-8 text-center md:p-10">
-            <p className="body-lg mb-8">
+          <div className="card mx-auto max-w-3xl p-6 text-center sm:p-8 md:p-10">
+            <p className="body-lg mb-6">
               Kamu bisa menghubungi saya melalui platform berikut:
             </p>
 
+            {/* Varian eksplisit per kanal — tanpa branching maupun map. */}
             <ul className="flex flex-wrap justify-center gap-3">
-              {CONTACTS.map((contact) => (
-                <li key={contact.label}>
-                  <ContactButton {...contact} />
-                </li>
-              ))}
+              <li>
+                <ContactButton href={WHATSAPP_URL} label="WhatsApp">
+                  <ChatIcon className={CONTACT_ICON_CLASS} />
+                </ContactButton>
+              </li>
+              <li>
+                <ContactButton href="mailto:hello@nandra.com" label="Email">
+                  <MailIcon className={CONTACT_ICON_CLASS} />
+                </ContactButton>
+              </li>
+              <li>
+                <ContactButton href="https://github.com/nandra-lp" label="GitHub">
+                  <GithubMark className={CONTACT_ICON_CLASS} />
+                </ContactButton>
+              </li>
+              <li>
+                <ContactButton href="https://linkedin.com/in/USERNAME" label="LinkedIn">
+                  <LinkedinIcon className={CONTACT_ICON_CLASS} />
+                </ContactButton>
+              </li>
+              <li>
+                <ContactButton href="https://instagram.com/nandraluthfii" label="Instagram">
+                  <InstagramIcon className={CONTACT_ICON_CLASS} />
+                </ContactButton>
+              </li>
             </ul>
 
-            <div className="mt-8 border-t border-border pt-8">
-              <Button href="mailto:hello@nandra.com" variant="primary" size="lg">
-                <Icon name="mail" className="h-4 w-4" />
-                Kirim Email
+            <div className="mt-6 border-t border-border pt-6">
+              <Button href={WHATSAPP_URL} variant="primary" size="lg">
+                <Icon name="chat" className="h-5 w-5" />
+                Chat via WhatsApp
               </Button>
             </div>
           </div>
         </Reveal>
 
         <Reveal>
-          <p className="body-sm mt-12 text-center">
+          <p className="body-sm mt-10 text-center">
             Terima kasih sudah mengunjungi portfolio saya.
           </p>
         </Reveal>
@@ -58,20 +96,16 @@ export default function Contact() {
 
 /* -------------------------------------------------- */
 
-function ContactButton({ href, icon, label }) {
+function ContactButton({ href, label, children }) {
   const isExternal = href.startsWith("http");
   return (
     <a
       href={href}
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       aria-label={`Hubungi saya via ${label}`}
-      className="btn-secondary"
+      className="btn-secondary group min-h-11"
     >
-      {icon === "github" ? (
-        <GithubIcon className="h-5 w-5" />
-      ) : (
-        <Icon name={icon} className="h-5 w-5" />
-      )}
+      {children}
       {label}
     </a>
   );
